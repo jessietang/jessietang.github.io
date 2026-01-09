@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首页 | Jessie's Blog</title>
+    <meta name="description" content="A personal blog about technology, life and everything in between.">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="home">
+    <section class="intro">
+        <h2>欢迎来到我的博客</h2>
+        <p>A personal blog about technology, life and everything in between.</p>
+    </section>
+
+    <section class="posts">
+        <h3>最新文章</h3>
+        
+        <article class="post-item">
+            <header class="post-item-header">
+                <h4 class="post-item-title">
+                    <a href="/blog/2021/05/08/%E7%AE%97%E6%B3%95%E7%9A%84%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%92%8C%E7%A9%BA%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6.html">算法的时间复杂度和空间复杂度</a>
+                </h4>
+                <div class="post-item-meta">
+                    <time datetime="2021-05-08T00:00:00+08:00">2021年05月08日</time>
+                    
+                    <span class="post-item-categories">
+                        
+                        <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                        
+                        
+                    </span>
+                    
+                </div>
+            </header>
+            <div class="post-item-excerpt">
+                
+                    前言
+
+如何衡量算法的优劣呢？主要从算法所占用的“时间”和“空间”去衡量。
+时间维度：是指执行当前算法所消耗的时间，我们通常用【时间复杂度】来描述
+空间维度：是指执行当前算法需要占用多少内存空间，我们通常用【空间复杂度】来描述
+
+大 O 复杂度表示法
+
+算法执行的效率。通俗的讲，就是算法代码执行的时间。
+简单看个例子：
+
+var m = 0;
+for(i=1; i&lt;=n; ++i)
+{...
+                    <a href="/blog/2021/05/08/%E7%AE%97%E6%B3%95%E7%9A%84%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%92%8C%E7%A9%BA%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6.html" class="read-more">阅读更多</a>
+                
+            </div>
+        </article>
+        
+        <article class="post-item">
+            <header class="post-item-header">
+                <h4 class="post-item-title">
+                    <a href="/blog/2021/05/07/%E8%A7%A3%E5%86%B3oninput%E4%BA%8B%E4%BB%B6%E5%9C%A8%E4%B8%AD%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95%E4%B8%8B%E4%BC%9A%E5%8F%96%E5%BE%97%E6%8B%BC%E9%9F%B3%E7%9A%84%E5%80%BC%E7%9A%84%E9%97%AE%E9%A2%98.html">解决oninput事件在中文输入法下会取得拼音的值的问题</a>
+                </h4>
+                <div class="post-item-meta">
+                    <time datetime="2021-05-07T00:00:00+08:00">2021年05月07日</time>
+                    
+                    <span class="post-item-categories">
+                        
+                        <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                        
+                        
+                    </span>
+                    
+                </div>
+            </header>
+            <div class="post-item-excerpt">
+                
+                    前言
+
+如果直接通过 input 监听输入框输入，它会在键盘按键按下的时候就触发事件，这样就会导致一些问题，比如在 chrome 浏览器中，想输入中文输入不了。
+解决方法是，用 compositionstart 和 compositionend.
+
+注意：chrome 和 safari 浏览器（webkit 内核）跟其他浏览器的执行顺序不同，
+chrome 和 safari 是 compos...
+                    <a href="/blog/2021/05/07/%E8%A7%A3%E5%86%B3oninput%E4%BA%8B%E4%BB%B6%E5%9C%A8%E4%B8%AD%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95%E4%B8%8B%E4%BC%9A%E5%8F%96%E5%BE%97%E6%8B%BC%E9%9F%B3%E7%9A%84%E5%80%BC%E7%9A%84%E9%97%AE%E9%A2%98.html" class="read-more">阅读更多</a>
+                
+            </div>
+        </article>
+        
+        <article class="post-item">
+            <header class="post-item-header">
+                <h4 class="post-item-title">
+                    <a href="/blog/2021/05/07/vue%E4%B8%ADinput%E7%9A%84blur%E5%BD%B1%E5%93%8D%E4%B8%8B%E6%8B%89%E6%A1%86%E4%B8%ADclick%E4%BA%8B%E4%BB%B6.html">vue中input的blur影响下拉框中click事件</a>
+                </h4>
+                <div class="post-item-meta">
+                    <time datetime="2021-05-07T00:00:00+08:00">2021年05月07日</time>
+                    
+                    <span class="post-item-categories">
+                        
+                        <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                        , 
+                        
+                        <a href="/categories/#vue">Vue</a>
+                        
+                        
+                    </span>
+                    
+                </div>
+            </header>
+            <div class="post-item-excerpt">
+                
+                    问题描述:
+
+存在如下一段代码：
+
+&lt;input ref="input" class="search-box" placeholder="请输入要搜索的内容" v-model="keyWords" @input="search()" @focus="focusSearch()" @blur="onBlur()"/&gt;
+
+&lt;div class="result-list" v-i...
+                    <a href="/blog/2021/05/07/vue%E4%B8%ADinput%E7%9A%84blur%E5%BD%B1%E5%93%8D%E4%B8%8B%E6%8B%89%E6%A1%86%E4%B8%ADclick%E4%BA%8B%E4%BB%B6.html" class="read-more">阅读更多</a>
+                
+            </div>
+        </article>
+        
+        <article class="post-item">
+            <header class="post-item-header">
+                <h4 class="post-item-title">
+                    <a href="/blog/2021/05/07/json-tree%E5%BD%A2%E6%95%B0%E6%8D%AE%E6%9F%A5%E6%89%BE%E5%A4%8D%E5%90%88%E6%9D%A1%E4%BB%B6%E7%9A%84json-tree%E6%95%B0%E6%8D%AE.html">json tree形数据查找复合条件的json tree数据</a>
+                </h4>
+                <div class="post-item-meta">
+                    <time datetime="2021-05-07T00:00:00+08:00">2021年05月07日</time>
+                    
+                    <span class="post-item-categories">
+                        
+                        <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                        
+                        
+                    </span>
+                    
+                </div>
+            </header>
+            <div class="post-item-excerpt">
+                
+                    需求描述
+
+存在一个 json tree 形数据：
+
+var treeData = [
+    {
+        id: 'root',
+        name: '食物',
+        children: [
+            {
+                id: '1',
+                name: '水果',
+                chil...
+                    <a href="/blog/2021/05/07/json-tree%E5%BD%A2%E6%95%B0%E6%8D%AE%E6%9F%A5%E6%89%BE%E5%A4%8D%E5%90%88%E6%9D%A1%E4%BB%B6%E7%9A%84json-tree%E6%95%B0%E6%8D%AE.html" class="read-more">阅读更多</a>
+                
+            </div>
+        </article>
+        
+        <article class="post-item">
+            <header class="post-item-header">
+                <h4 class="post-item-title">
+                    <a href="/blog/2021/04/12/%E8%B0%88%E8%B0%88vueRouter.html">谈谈vue-router</a>
+                </h4>
+                <div class="post-item-meta">
+                    <time datetime="2021-04-12T00:00:00+08:00">2021年04月12日</time>
+                    
+                    <span class="post-item-categories">
+                        
+                        <a href="/categories/#vue">Vue</a>
+                        
+                        
+                    </span>
+                    
+                </div>
+            </header>
+            <div class="post-item-excerpt">
+                
+                    vue-router 对不同模式的实现大致是这样的：
+
+
+  首先根据 mode 来确定所选的模式，如果当前环境不支持 history 模式，会强制切换到 hash 模式；
+  如果当前环境不是浏览器环境，会切换到 abstract 模式下。然后再根据不同模式来生成不同的 history 操作对象。
+
+
+new VueRouter 过程
+
+
+  init 方法内的 app 变量便是存储的当前...
+                    <a href="/blog/2021/04/12/%E8%B0%88%E8%B0%88vueRouter.html" class="read-more">阅读更多</a>
+                
+            </div>
+        </article>
+        
+    </section>
+
+    <!-- 分页导航 -->
+    
+    <nav class="pagination">
+        
+        <a href="/blog/page4/" class="prev-page">上一页</a>
+        
+        
+        <span class="page-number">第 5 页，共 8 页</span>
+        
+        
+        <a href="/blog/page6/" class="next-page">下一页</a>
+        
+    </nav>
+    
+</div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

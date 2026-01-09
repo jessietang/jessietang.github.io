@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>解决oninput事件在中文输入法下会取得拼音的值的问题 | Jessie's Blog</title>
+    <meta name="description" content="前言如果直接通过 input 监听输入框输入，它会在键盘按键按下的时候就触发事件，这样就会导致一些问题，比如在 chrome 浏览器中，想输入中文输入不了。解决方法是，用 compositionstart 和 compositionend.注意：chrome 和 safari 浏览器（webkit 内核）跟其他浏...">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+    <header class="post-header">
+        <h1 class="post-title">解决oninput事件在中文输入法下会取得拼音的值的问题</h1>
+        <div class="post-meta">
+            <time datetime="2021-05-07T00:00:00+08:00">2021年05月07日</time>
+            
+            <span class="post-categories">
+                
+                <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                
+                
+            </span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+        <h3 id="前言">前言</h3>
+
+<p>如果直接通过 input 监听输入框输入，它会在键盘按键按下的时候就触发事件，这样就会导致一些问题，比如在 chrome 浏览器中，想输入中文输入不了。
+解决方法是，用 compositionstart 和 compositionend.</p>
+
+<p>注意：chrome 和 safari 浏览器（webkit 内核）跟其他浏览器的执行顺序不同，
+chrome 和 safari 是 compositionstart =&gt; 监听 input 事件 =&gt; compositionend,<br />
+其他浏览器是 compositionstart =&gt; compositionend =&gt; 监听 input 事件。
+所以，在 compositionend 浏览器里面要判断一下是否是谷歌浏览器。</p>
+
+<h3 id="上代码">上代码</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    // 输入框事件
+    const searchInputDom = document.getElementById('search-input');
+
+    // 解决oninput事件在中文输入法下会取得拼音的值的问题
+    let isInputZh = false;
+
+    searchInputDom.addEventListener('compositionstart', (e)=&gt; {
+        console.log('compositionstart')
+        isInputZh = true;
+    }, false);
+
+    searchInputDom.addEventListener('compositionend',  (e)=&gt; {
+        console.log('compositionend')
+        isInputZh = false;
+
+        // 判断是否是webkit内核
+        if(!isInputZh &amp;&amp; isWebkit()){
+            toSearch(searchInputDom.value)
+        }
+
+    }, false);
+
+    searchInputDom.oninput= (e) =&gt; {
+      console.log('oninput')
+      if(isInputZh) return;
+      toSearch(e.target.value)
+    };
+
+
+
+    // 判断是否是chrome or safari
+    function isWebkit(){
+        var browser = {
+            versions: function() {
+                var u = navigator.userAgent, app = navigator.appVersion;
+                return {
+                    trident: u.indexOf('Trident') &gt; -1, //IE内核
+                    presto: u.indexOf('Presto') &gt; -1, //opera内核
+                    webKit: u.indexOf('AppleWebKit') &gt; -1, //苹果、谷歌内核
+                    gecko: u.indexOf('Gecko') &gt; -1 &amp;&amp; u.indexOf('KHTML') == -1, //火狐内核
+                    mobile: !!u.match(/AppleWebKit.*Mobile.*/) || !!u.match(/AppleWebKit/), //是否为移动终端
+                    ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                    android: u.indexOf('Android') &gt; -1 || u.indexOf('Linux') &gt; -1, //android终端或者uc浏览器
+                    iPhone: u.indexOf('iPhone') &gt; -1 || u.indexOf('Mac') &gt; -1, //是否为iPhone或者QQHD浏览器
+                    iPad: u.indexOf('iPad') &gt; -1, //是否iPad
+                    webApp: u.indexOf('Safari') == -1 //是否web应该程序，没有头部与底部
+                };
+            }(),
+            language: (navigator.browserLanguage || navigator.language).toLowerCase()
+        }
+
+        if(browser.versions.webKit){
+            return true;
+        }
+
+        return false;
+    }
+
+</code></pre></div></div>
+
+    </div>
+
+    <div class="post-navigation">
+        
+        <div class="prev-post">
+            <a href="/blog/2021/05/07/vue%E4%B8%ADinput%E7%9A%84blur%E5%BD%B1%E5%93%8D%E4%B8%8B%E6%8B%89%E6%A1%86%E4%B8%ADclick%E4%BA%8B%E4%BB%B6.html">
+                <span>上一篇</span>
+                vue中input的blur影响下拉框中click事件
+            </a>
+        </div>
+        
+        
+        <div class="next-post">
+            <a href="/blog/2021/05/08/%E7%AE%97%E6%B3%95%E7%9A%84%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%92%8C%E7%A9%BA%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6.html">
+                <span>下一篇</span>
+                算法的时间复杂度和空间复杂度
+            </a>
+        </div>
+        
+    </div>
+</article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

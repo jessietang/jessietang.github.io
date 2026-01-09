@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鼠标右键contextMenu事件在mac和windows上的不同 | Jessie's Blog</title>
+    <meta name="description" content="前言：在做一个自定义鼠标右键菜单的需求的时候，发现 contextMenu 事件在 mac 和 windows 平台上表现不一致。方法使用      区别          mac: 右键按下即触发 contextMenu event，鼠标抬起，触发 mouseUp event；      win: 右键按下抬起...">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+    <header class="post-header">
+        <h1 class="post-title">鼠标右键contextMenu事件在mac和windows上的不同</h1>
+        <div class="post-meta">
+            <time datetime="2021-03-31T00:00:00+08:00">2021年03月31日</time>
+            
+            <span class="post-categories">
+                
+                <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                
+                
+            </span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+        <p>前言：在做一个自定义鼠标右键菜单的需求的时候，发现 contextMenu 事件在 mac 和 windows 平台上表现不一致。</p>
+
+<h3 id="方法使用">方法使用</h3>
+
+<ul>
+  <li>
+    <p>区别</p>
+
+    <ul>
+      <li>mac: 右键按下即触发 contextMenu event，鼠标抬起，触发 mouseUp event；</li>
+      <li>win: 右键按下抬起后，先触发 mouseUp event，然后触发 contextMenu event。</li>
+    </ul>
+  </li>
+</ul>
+
+    </div>
+
+    <div class="post-navigation">
+        
+        <div class="prev-post">
+            <a href="/blog/2021/03/30/insertAdjacentHTML%E6%96%B9%E6%B3%95%E7%9A%84%E4%BD%BF%E7%94%A8.html">
+                <span>上一篇</span>
+                insertAdjacentHTML方法的使用
+            </a>
+        </div>
+        
+        
+        <div class="next-post">
+            <a href="/blog/2021/04/06/ios%E5%AE%8C%E6%95%B4%E7%9A%84-statusbar-%E9%AB%98%E5%BA%A6%E7%9A%84%E8%A1%A8.html">
+                <span>下一篇</span>
+                ios完整的 statusbar 高度的表
+            </a>
+        </div>
+        
+    </div>
+</article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

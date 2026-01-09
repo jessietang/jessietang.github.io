@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RN使用react-navigation底部tab切换触发相应事件 | Jessie's Blog</title>
+    <meta name="description" content="问题引入：在 rn 实际开发场景中遇到很多这种需求：主页面，底部是 react-navigation 实现的底部 tab 栏。在使用应用的过程中，可进行切换。但是，在切换的时候，需要触发切换这个事件，在这个事件里面，去执行其他时间（例如：请求最新的个人信息数据、或者最新的消息数据等等）解决这类问题，大致就是网上查...">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+    <header class="post-header">
+        <h1 class="post-title">RN使用react-navigation底部tab切换触发相应事件</h1>
+        <div class="post-meta">
+            <time datetime="2020-07-24T00:00:00+08:00">2020年07月24日</time>
+            
+            <span class="post-categories">
+                
+                <a href="/categories/#react-native">React-Native</a>
+                
+                
+            </span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+        <p>问题引入：
+在 rn 实际开发场景中遇到很多这种需求：主页面，底部是 react-navigation 实现的底部 tab 栏。在使用应用的过程中，可进行切换。但是，在切换的时候，需要触发切换这个事件，在这个事件里面，去执行其他时间（例如：请求最新的个人信息数据、或者最新的消息数据等等）
+解决这类问题，大致就是网上查阅，翻翻文档。最后把我自己实际开发中用到的两种解决方案附上，以做记录：</p>
+
+<ol>
+  <li>完全使用 hook：首次进入该页面时就会触发。后面再次进入的时候，也会触发。首次进入该 screen 不需要单独请求数据。</li>
+</ol>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import { useFocusEffect, useIsFocused } from 'react-navigation-hooks'
+import React, { useCallback, useEffect, useState } from 'react'
+
+useFocusEffect(
+    useCallback(() =&gt; {
+      console.log('screen takes focus')
+      doRequest();
+
+      return () =&gt; console.debug('screen loses focus')
+    }, [])
+)
+</code></pre></div></div>
+
+<ol>
+  <li>不使用 hook：用 didFocus 来进行监听，首次进入该页面时，不会触发。后面再进入的时候，会触发。所以这种模式，首次进入该 screen 需要单独请求数据。</li>
+</ol>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// 首次进入需要单独请求数据
+useEffect(()=&gt;{
+    console.log('第一进入触发')
+    doRequest();
+},[])
+
+useEffect(() =&gt; {
+    console.log('第一进入触发')
+    const _navListener = props.navigation.addListener('didFocus', () =&gt; {
+      console.log('后面再进入触发')
+      doRequest();
+    });
+
+    return () =&gt; {
+      _navListener.remove();
+    };
+  }, []);
+</code></pre></div></div>
+
+    </div>
+
+    <div class="post-navigation">
+        
+        <div class="prev-post">
+            <a href="/blog/2020/07/01/mac%E4%B8%8B%E5%85%A8%E5%B1%80%E9%85%8D%E7%BD%AEadb%E7%8E%AF%E5%A2%83.html">
+                <span>上一篇</span>
+                mac下全局配置adb环境
+            </a>
+        </div>
+        
+        
+        <div class="next-post">
+            <a href="/blog/2021/01/05/Bash%E8%84%9A%E6%9C%AC%E5%AD%A6%E4%B9%A0.html">
+                <span>下一篇</span>
+                Bash脚本学习
+            </a>
+        </div>
+        
+    </div>
+</article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

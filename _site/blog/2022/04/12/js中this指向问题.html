@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>js中的this指向问题 | Jessie's Blog</title>
+    <meta name="description" content="先说结论。总结的规律：      普通函数。普通函数体内的this对象，指向调用该函数时候的对象的this。严格模式下（设置’use strict’），this指向undefined。    箭头函数。箭头函数体内的this对象，指向该函数所在的作用域（这里的作用域就简单理解成一个函数吧，虽然不太准确）指向的对象...">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+    <header class="post-header">
+        <h1 class="post-title">js中的this指向问题</h1>
+        <div class="post-meta">
+            <time datetime="2022-04-12T00:00:00+08:00">2022年04月12日</time>
+            
+            <span class="post-categories">
+                
+                <a href="/categories/#面试合集">面试合集</a>
+                , 
+                
+                <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                
+                
+            </span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+        <h3 id="先说结论">先说结论。</h3>
+<h4 id="总结的规律">总结的规律：</h4>
+<blockquote>
+  <ol>
+    <li>普通函数。普通函数体内的this对象，指向<strong>调用该函数时候的对象的this</strong>。严格模式下（设置’use strict’），this指向undefined。</li>
+    <li>箭头函数。箭头函数体内的this对象，指向<strong>该函数所在的作用域（这里的作用域就简单理解成一个函数吧，虽然不太准确）指向的对象</strong>。即使call()、apply()、bind()方法也不能改变箭头函数ths的指向。</li>
+    <li>延时函数setTimeout内部的回调函数（普通匿名函数）的this指向全局对象window。</li>
+  </ol>
+</blockquote>
+
+<h4 id="实例辅证以下都是在非严格模式下">实例辅证（以下都是在非严格模式下）</h4>
+
+<h4 id="1-实例1">1. 实例1：</h4>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">test</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="na">printX</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="nf">printA</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nx">test</span><span class="p">.</span><span class="nf">printX</span><span class="p">()</span> <span class="c1">// undefined  window{...} 指向window </span>
+<span class="nx">test</span><span class="p">.</span><span class="nf">printA</span><span class="p">()</span> <span class="c1">// 1 Object{...} 指向test对象</span>
+</code></pre></div></div>
+<p>分析：
+先来分析test.printX()。箭头函数里面的this对象，指向<strong>该函数所在的作用域指向的对象</strong>。<strong>该函数所在的作用域</strong>：作用域是指函数内部，这里的箭头函数，也就是printX，所在的作用域其实是最外层的js环境，因为没有其他函数包裹。<strong>作用域指向的对象</strong>：最外层的js环境指向的对象是winodw对象，所以这里的this指向的是window对象。<br />
+再来分析test.printA()。普通函数体内的this对象，指向<strong>调用该函数时候的对象的thisprintA是普通函数</strong>。test对象去调用，所以printA函数内部的this指向test对象。</p>
+
+<h4 id="2-实例2">2. 实例2：</h4>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">test</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="na">printX</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="nf">printA</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">printX</span> <span class="o">=</span> <span class="nx">test</span><span class="p">.</span><span class="nx">printX</span> 
+<span class="kd">let</span> <span class="nx">printA</span> <span class="o">=</span> <span class="nx">test</span><span class="p">.</span><span class="nx">printA</span> 
+
+<span class="nf">printX</span><span class="p">()</span> <span class="c1">// undefined window{...}</span>
+<span class="nf">printA</span><span class="p">()</span> <span class="c1">// undefined window{...}</span>
+</code></pre></div></div>
+<p>分析：
+先来分析printX()。箭头函数里面的this对象，指向<strong>该函数所在的作用域指向的对象</strong>。<strong>该函数所在的作用域</strong>：作用域是指函数内部，这里的箭头函数，也就是printX，所在的作用域其实是最外层的js环境，因为没有其他函数包裹。<strong>作用域指向的对象</strong>：最外层的js环境指向的对象是winodw对象，所以这里的this指向的是window对象。<br />
+再来分析printA()。普通函数体内的this对象，指向<strong>调用该函数时候的对象的thisprintA是普通函数</strong>。这里printA函数，其实是window.printA()，是window对象去调用，所以printA函数内部的this指向window对象。</p>
+
+<h4 id="3-实例3">3. 实例3：</h4>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">test</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="na">printX</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="nf">printA</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">printX</span> <span class="o">=</span> <span class="nx">test</span><span class="p">.</span><span class="nx">printX</span><span class="p">.</span><span class="nf">bind</span><span class="p">(</span><span class="nx">test</span><span class="p">)</span> 
+<span class="kd">let</span> <span class="nx">printA</span> <span class="o">=</span> <span class="nx">test</span><span class="p">.</span><span class="nx">printA</span><span class="p">.</span><span class="nf">bind</span><span class="p">(</span><span class="nx">test</span><span class="p">)</span> 
+<span class="kd">let</span> <span class="nx">printB</span> <span class="o">=</span> <span class="nx">test</span><span class="p">.</span><span class="nx">printA</span><span class="p">.</span><span class="nf">bind</span><span class="p">({</span><span class="na">x</span><span class="p">:</span> <span class="mi">2</span> <span class="p">})</span> <span class="c1">// 创建一个新函数，把this绑定到{x:2}这个对象上</span>
+
+<span class="nf">printX</span><span class="p">()</span> <span class="c1">// undefined window{...}</span>
+<span class="nf">printA</span><span class="p">()</span> <span class="c1">// 1 Object{x: 1, ...}</span>
+<span class="nf">printB</span><span class="p">()</span> <span class="c1">// 2 Object{x: 2}</span>
+
+</code></pre></div></div>
+<p>分析：
+先来分析printX()。let printX = test.printX.bind(test) 。由于<strong>箭头函数不绑定this，它会捕获其所在（即定义的位置）上下文的this值，作为自己的this值。所以 call() / apply() / bind() 方法对于箭头函数来说只是传入参数，对它的 this 毫无影响。</strong>所以这里，printX箭头函数中的this对象的指向，不受bind函数的影响。printX箭头函数的作用域是最外层js环境，最外层js环境指向的对象是window对象，所以printX箭头函数中的this对象指向window。<br />
+再来分析printA()。let printA = test.printA.bind(test) 。test对象上的printA是普通函数，调用bind函数，改变printA函数内this对象指向为test对象。<br />
+最后分析printB()。let printB = test.printA.bind({x: 2 })。test对象上的printA是普通函数，调用bind函数，改变printA函数内this对象指向为对象{x: 2 }。</p>
+
+<h4 id="4-实例4">4. 实例4：</h4>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">test</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="na">printX</span><span class="p">:</span> <span class="kd">function</span><span class="p">(){</span>
+        <span class="kd">var</span> <span class="nx">t2</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="na">x</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="na">_printX</span><span class="p">:</span> <span class="kd">function</span><span class="p">(){</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="nx">t2</span><span class="p">.</span><span class="nf">_printX</span><span class="p">()</span>
+    <span class="p">},</span>
+    <span class="nf">printA</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// _printX是箭头函数printX中的普通函数，this指向调用_printX方法的对象t2</span>
+<span class="nx">test</span><span class="p">.</span><span class="nf">printX</span><span class="p">()</span> <span class="c1">// 2 t2{x: 2, ...}</span>
+<span class="nx">test</span><span class="p">.</span><span class="nf">printA</span><span class="p">()</span> <span class="c1">// 1 Object{...} 指向test对象</span>
+</code></pre></div></div>
+
+<h4 id="5-实例5">5. 实例5：</h4>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">test</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="na">printX</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">t2</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="na">x</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="na">_printX</span><span class="p">:</span> <span class="kd">function</span><span class="p">(){</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="nx">t2</span><span class="p">.</span><span class="nf">_printX</span><span class="p">()</span>
+    <span class="p">},</span>
+    <span class="nf">printA</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// _printX是箭头函数printX中的普通函数，this指向调用_printX方法的对象t2</span>
+<span class="nx">test</span><span class="p">.</span><span class="nf">printX</span><span class="p">()</span> <span class="c1">// 2 t2{x: 2, ...}</span>
+<span class="nx">test</span><span class="p">.</span><span class="nf">printA</span><span class="p">()</span> <span class="c1">// 1 Object{...} 指向test对象</span>
+
+</code></pre></div></div>
+
+<h4 id="6-实例6">6. 实例6：</h4>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kd">var</span> <span class="nx">test</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="na">printX</span><span class="p">:</span> <span class="kd">function</span><span class="p">(){</span>
+        <span class="kd">var</span> <span class="nx">t2</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="na">x</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="na">_printX</span><span class="p">:</span> <span class="p">()</span><span class="o">=&gt;</span><span class="p">{</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="nx">t2</span><span class="p">.</span><span class="nf">_printX</span><span class="p">()</span>
+    <span class="p">},</span>
+    <span class="nf">printA</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// 箭头函数中的this对象，指向该箭头函数所在的作用域指向的对象。</span>
+<span class="c1">// 这里的箭头函数是_printX，他所在的作用域是函数printX，而函数printX指向的对象是test对象</span>
+<span class="c1">// 所以，_printX函数里面的this指向的是test对象</span>
+<span class="nx">test</span><span class="p">.</span><span class="nf">printX</span><span class="p">()</span> <span class="c1">// 1 Object{x: 1, printX: ...}</span>
+<span class="nx">test</span><span class="p">.</span><span class="nf">printA</span><span class="p">()</span> <span class="c1">// 1 Object{x: 1, printX: ...} 指向test对象</span>
+
+</code></pre></div></div>
+
+<h4 id="7-实例7">7. 实例7：</h4>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">test</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="na">printX</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">t2</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="na">x</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="na">_printX</span><span class="p">:</span> <span class="p">()</span><span class="o">=&gt;</span><span class="p">{</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="nx">t2</span><span class="p">.</span><span class="nf">_printX</span><span class="p">()</span>
+    <span class="p">},</span>
+    <span class="nf">printA</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// 箭头函数里面的this对象，指向该函数所在的作用域指向的对象</span>
+<span class="c1">// 这里的箭头函数是_printX，他所在的作用域的printX函数，</span>
+<span class="c1">// 而printX又是一个箭头函数，他指向的对象（所在作用域）是最外层js，因为没有其他函数包裹，而最外层js环境指向的是window对象</span>
+<span class="c1">// 所以箭头函数_printX里面的this指向的</span>
+<span class="nx">test</span><span class="p">.</span><span class="nf">printX</span><span class="p">()</span> <span class="c1">// undefined window{...}</span>
+<span class="nx">test</span><span class="p">.</span><span class="nf">printA</span><span class="p">()</span> <span class="c1">// 1 Object{...} 指向test对象</span>
+
+</code></pre></div></div>
+
+<h3 id="8-实例8">8. 实例8：</h3>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">a</span><span class="p">:</span> <span class="kd">function</span><span class="p">(){</span>
+        <span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="na">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="na">printX</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+        <span class="nx">obj</span><span class="p">.</span><span class="nf">printX</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// 箭头函数里面的this对象，指向该函数所在的作用域指向的对象</span>
+<span class="c1">// 这里的箭头函数是printX，他所在的作用域是函数a，函数a指向的对象是p,</span>
+<span class="c1">// 所以这里的this指向的是对象p</span>
+<span class="nx">p</span><span class="p">.</span><span class="nf">a</span><span class="p">()</span> <span class="c1">// undefined Object{a:...}</span>
+
+</code></pre></div></div>
+
+<h3 id="9-实例9">9. 实例9：</h3>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">fullname</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">a</span><span class="dl">"</span>
+<span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">fullname</span><span class="p">:</span> <span class="dl">"</span><span class="s2">b</span><span class="dl">"</span><span class="p">,</span>
+  <span class="na">prop</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">fullname</span><span class="p">:</span> <span class="dl">"</span><span class="s2">c</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">getFullname</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">fullname</span><span class="p">;</span>
+    <span class="p">},</span>
+  <span class="p">},</span>
+<span class="p">};</span>
+<span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nx">obj</span><span class="p">.</span><span class="nx">prop</span><span class="p">.</span><span class="nf">getFullname</span><span class="p">());</span> 
+<span class="kd">var</span> <span class="nx">test</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">prop</span><span class="p">.</span><span class="nx">getFullname</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nf">test</span><span class="p">());</span> <span class="c1">// 输出结果是： a  a</span>
+
+</code></pre></div></div>
+
+<h3 id="but-我遇到了用上述结论无法解释的问题在延时函数内部的回调函数里面的this指向问题可能还需要我再想想怎么去解释">but, 我遇到了用上述结论无法解释的问题。在延时函数内部的回调函数里面的this指向问题。可能还需要我再想想，怎么去解释。</h3>
+<h3 id="先上例子">先上例子：</h3>
+
+<h4 id="1-延时函数内部的回调函数普通匿名函数的this指向全局对象window">1. 延时函数内部的回调函数（普通匿名函数）的this指向全局对象window</h4>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 延时函数内部的回调函数的this指向全局对象window</span>
+<span class="kd">function</span> <span class="nf">Person</span><span class="p">(){</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="nf">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="p">},</span><span class="mi">1000</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Person</span><span class="p">()</span> <span class="c1">// undefined window{...}</span>
+
+</code></pre></div></div>
+
+<h4 id="2-通过bind方法来改变其内部函数this指向">2. 通过bind方法来改变其内部函数this指向</h4>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">Person</span><span class="p">(){</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="nf">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="p">}.</span><span class="nf">bind</span><span class="p">(</span><span class="k">this</span><span class="p">),</span><span class="mi">1000</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Person</span><span class="p">()</span> <span class="c1">// 1 Person{x: 1, ...}</span>
+
+</code></pre></div></div>
+
+<h4 id="3-通过箭头函数来改变下面这两个例子我不知道怎么去解释">3. 通过箭头函数来改变。下面这两个例子，我不知道怎么去解释？？？</h4>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">test</span><span class="p">(){</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="nf">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="p">},</span><span class="mi">1000</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="nf">test</span><span class="p">()</span> <span class="c1">// 1 window{...}</span>
+</code></pre></div></div>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">test</span><span class="p">(){</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="nf">setTimeout</span><span class="p">(()</span><span class="o">=&gt;</span><span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="p">},</span><span class="mi">1000</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="nf">test</span><span class="p">()</span> <span class="c1">// 1 window{...}</span>
+
+</code></pre></div></div>
+
+<h4 id="4-再看下面这俩我也无法解释得到的结果">4. 再看下面这俩，我也无法解释得到的结果：</h4>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">Person</span><span class="p">(){</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="nf">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="p">},</span><span class="mi">1000</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Person</span><span class="p">()</span> <span class="c1">// undefined window{...}</span>
+
+</code></pre></div></div>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">Person</span><span class="p">(){</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="nf">setTimeout</span><span class="p">(()</span><span class="o">=&gt;</span><span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+    <span class="p">},</span><span class="mi">1000</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Person</span><span class="p">()</span> <span class="c1">// 1 Person{x: 1, ...}</span>
+
+</code></pre></div></div>
+
+<p>额，上面这俩，等我再想想，怎么合理的去解释结果。。。</p>
+
+
+    </div>
+
+    <div class="post-navigation">
+        
+        <div class="prev-post">
+            <a href="/blog/2021/05/31/%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1%E6%98%AF%E5%90%A6%E6%9C%89%E6%9F%90%E4%B8%AA%E5%B1%9E%E6%80%A7.html">
+                <span>上一篇</span>
+                判断一个对象是否有某个属性
+            </a>
+        </div>
+        
+        
+        <div class="next-post">
+            <a href="/blog/2022/04/12/bind-call-apply%E5%87%BD%E6%95%B0%E7%9A%84%E5%8C%BA%E5%88%AB%E5%8F%8A%E5%87%A0%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%94%A8%E6%B3%95.html">
+                <span>下一篇</span>
+                bind、call、apply函数的区别及几种常见用法
+            </a>
+        </div>
+        
+    </div>
+</article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

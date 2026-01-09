@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>谈谈vue-router | Jessie's Blog</title>
+    <meta name="description" content="vue-router 对不同模式的实现大致是这样的：  首先根据 mode 来确定所选的模式，如果当前环境不支持 history 模式，会强制切换到 hash 模式；  如果当前环境不是浏览器环境，会切换到 abstract 模式下。然后再根据不同模式来生成不同的 history 操作对象。new VueRout...">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+    <header class="post-header">
+        <h1 class="post-title">谈谈vue-router</h1>
+        <div class="post-meta">
+            <time datetime="2021-04-12T00:00:00+08:00">2021年04月12日</time>
+            
+            <span class="post-categories">
+                
+                <a href="/categories/#vue">Vue</a>
+                
+                
+            </span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+        <h3 id="vue-router-对不同模式的实现大致是这样的">vue-router 对不同模式的实现大致是这样的：</h3>
+
+<ol>
+  <li>首先根据 mode 来确定所选的模式，如果当前环境不支持 history 模式，会强制切换到 hash 模式；</li>
+  <li>如果当前环境不是浏览器环境，会切换到 abstract 模式下。然后再根据不同模式来生成不同的 history 操作对象。</li>
+</ol>
+
+<h3 id="new-vuerouter-过程">new VueRouter 过程</h3>
+
+<ol>
+  <li>init 方法内的 app 变量便是存储的当前的 vue 实例的 this。</li>
+  <li>将 app 存入数组 apps 中。通过 this.app 判断是实例否已经被初始化。</li>
+  <li>通过 history 来确定不同路由的切换动作 history.transitionTo。</li>
+  <li>通过 history.listen 来注册路由变化的响应回调。</li>
+</ol>
+
+<h3 id="hash-和-history-的区别">hash 和 history 的区别</h3>
+
+<ol>
+  <li>最明显的是在显示上，hash 模式的 URL 中会夹杂着#号，而 history 没有。</li>
+  <li>Vue 底层对它们的实现方式不同。hash 模式是依靠 onhashchange 事件(监听 location.hash 的改变)，而 history 模式（popstate）是主要是依靠的 HTML5 history 中新增的两个方法，pushState()可以改变 url 地址且不会发送请求，replaceState()可以读取历史记录栈，还可以对浏览器记录进行修改。</li>
+  <li>当真正需要通过 URL 向后端发送 HTTP 请求的时候，比如常见的用户手动输入 URL 后回车，或者是刷新(重启)浏览器，这时候 history 模式需要后端的支持。因为 history 模式下，前端的 URL 必须和实际向后端发送请求的 URL 一致，例如有一个 URL 是带有路径 path 的(例如www.lindaidai.wang/blogs/id)，如果后端没有对这个路径做处理的话，就会返回404错误。所以需要后端增加一个覆盖所有情况的候选资源，一般会配合前端给出的一个404页面。</li>
+</ol>
+
+<h3 id="vue-history-配置">vue history 配置</h3>
+
+<p>vue history 需要 nginx 或者其他方式配置一下才可正确访问，否则路由跳转之后刷新一下便会出现 404。</p>
+
+<ul>
+  <li>vue history 模式 部署在服务器端的 nginx 配置，配置如下：</li>
+</ul>
+
+<ol>
+  <li>根路径配置：</li>
+</ol>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>server {
+
+        listen      443 ;
+
+        server_name  m;
+
+        root  html/mobile;
+
+        location / {
+
+            index  index.html index.htm;
+
+            try_files $uri $uri/ /index.html;
+
+        }
+
+    }
+</code></pre></div></div>
+
+<p>路由配置：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const router=new VueRouter({
+  mode: 'history',
+  routes
+})
+</code></pre></div></div>
+
+<ol>
+  <li>非根路径配置：</li>
+</ol>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>server {
+        location ^~/A {
+
+            index  index.html
+
+            try_files $uri $uri/ /A/index.html;
+
+        }
+
+        location ^~/B {
+
+            index  index.html
+
+            try_files $uri $uri/ /B/index.html;
+
+        }
+
+    }
+</code></pre></div></div>
+
+<p>路由配置：</p>
+
+<ul>
+  <li>A 项目：</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const router=new VueRouter({
+  mode: 'history',
+  routes,
+  base: '/A'
+})
+</code></pre></div></div>
+
+<ul>
+  <li>B 项目：</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const router=new VueRouter({
+  mode: 'history',
+  routes,
+  base: '/B'
+})
+</code></pre></div></div>
+
+<h3 id="缓存策略">缓存策略</h3>
+
+<p>设置某些文件不使用缓存：
+location = /index.html {
+add_header Cache-Control “no-cache, no-store”;
+}
+location = /lib/sdk.js {
+add_header Cache-Control “no-cache, no-store”;
+}</p>
+
+    </div>
+
+    <div class="post-navigation">
+        
+        <div class="prev-post">
+            <a href="/blog/2021/04/12/vue%E6%A0%B8%E5%BF%83%E8%A7%92%E8%89%B2.html">
+                <span>上一篇</span>
+                vue 核心角色
+            </a>
+        </div>
+        
+        
+        <div class="next-post">
+            <a href="/blog/2021/05/07/json-tree%E5%BD%A2%E6%95%B0%E6%8D%AE%E6%9F%A5%E6%89%BE%E5%A4%8D%E5%90%88%E6%9D%A1%E4%BB%B6%E7%9A%84json-tree%E6%95%B0%E6%8D%AE.html">
+                <span>下一篇</span>
+                json tree形数据查找复合条件的json tree数据
+            </a>
+        </div>
+        
+    </div>
+</article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

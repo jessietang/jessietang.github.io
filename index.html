@@ -1,0 +1,60 @@
+---
+layout: default
+title: 首页
+---
+
+<div class="home">
+    <section class="intro">
+        <h2>欢迎来到我的博客</h2>
+        <p>{{ site.description }}</p>
+    </section>
+
+    <section class="posts">
+        <h3>最新文章</h3>
+        {% for post in paginator.posts %}
+        <article class="post-item">
+            <header class="post-item-header">
+                <h4 class="post-item-title">
+                    <a href="{{ post.url }}">{{ post.title }}</a>
+                </h4>
+                <div class="post-item-meta">
+                    <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y年%m月%d日" }}</time>
+                    {% if post.categories %}
+                    <span class="post-item-categories">
+                        {% for category in post.categories %}
+                        <a href="{{ site.baseurl }}/categories/#{{ category | slugify }}">{{ category }}</a>
+                        {% if forloop.last == false %}, {% endif %}
+                        {% endfor %}
+                    </span>
+                    {% endif %}
+                </div>
+            </header>
+            <div class="post-item-excerpt">
+                {% if post.excerpt %}
+                    {{ post.excerpt | strip_html | truncate: 200 }}
+                    <a href="{{ post.url }}" class="read-more">阅读更多</a>
+                {% endif %}
+            </div>
+        </article>
+        {% endfor %}
+    </section>
+
+    <!-- 分页导航 -->
+    {% if paginator.total_pages > 1 %}
+    <nav class="pagination">
+        {% if paginator.previous_page %}
+        <a href="{{ paginator.previous_page_path }}" class="prev-page">上一页</a>
+        {% else %}
+        <span class="prev-page disabled">上一页</span>
+        {% endif %}
+        
+        <span class="page-number">第 {{ paginator.page }} 页，共 {{ paginator.total_pages }} 页</span>
+        
+        {% if paginator.next_page %}
+        <a href="{{ paginator.next_page_path }}" class="next-page">下一页</a>
+        {% else %}
+        <span class="next-page disabled">下一页</span>
+        {% endif %}
+    </nav>
+    {% endif %}
+</div>

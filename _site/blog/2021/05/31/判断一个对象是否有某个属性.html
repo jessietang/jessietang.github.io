@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>判断一个对象是否有某个属性 | Jessie's Blog</title>
+    <meta name="description" content="判断一个对象是否具有某个属性，以前只知道 hasOwnProperty 这个方法。最近看到还有 in 这种方式，故记录一下。let a = {    b: 1}  hasOwnPropertya.hasOwnProperty('b') // true  in('b' in a) // true如图：">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+    <header class="post-header">
+        <h1 class="post-title">判断一个对象是否有某个属性</h1>
+        <div class="post-meta">
+            <time datetime="2021-05-31T00:00:00+08:00">2021年05月31日</time>
+            
+            <span class="post-categories">
+                
+                <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                
+                
+            </span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+        <h3 id="判断一个对象是否具有某个属性以前只知道-hasownproperty-这个方法最近看到还有-in-这种方式故记录一下">判断一个对象是否具有某个属性，以前只知道 hasOwnProperty 这个方法。最近看到还有 in 这种方式，故记录一下。</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>let a = {
+    b: 1
+}
+</code></pre></div></div>
+
+<ol>
+  <li>hasOwnProperty</li>
+</ol>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a.hasOwnProperty('b') // true
+</code></pre></div></div>
+
+<ol>
+  <li>in</li>
+</ol>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>('b' in a) // true
+</code></pre></div></div>
+
+<p>如图：
+<img src="/assets/images/210531/t1.png" alt="测试" /></p>
+
+    </div>
+
+    <div class="post-navigation">
+        
+        <div class="prev-post">
+            <a href="/blog/2021/05/24/node%E5%BF%AB%E9%80%9F%E5%88%87%E6%8D%A2%E7%89%88%E6%9C%AC-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7%E5%92%8C%E9%99%8D%E7%BA%A7.html">
+                <span>上一篇</span>
+                node快速切换版本、版本升级和降级
+            </a>
+        </div>
+        
+        
+        <div class="next-post">
+            <a href="/blog/2022/04/12/js%E4%B8%ADthis%E6%8C%87%E5%90%91%E9%97%AE%E9%A2%98.html">
+                <span>下一篇</span>
+                js中的this指向问题
+            </a>
+        </div>
+        
+    </div>
+</article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

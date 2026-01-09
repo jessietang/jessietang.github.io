@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首页 | Jessie's Blog</title>
+    <meta name="description" content="A personal blog about technology, life and everything in between.">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="home">
+    <section class="intro">
+        <h2>欢迎来到我的博客</h2>
+        <p>A personal blog about technology, life and everything in between.</p>
+    </section>
+
+    <section class="posts">
+        <h3>最新文章</h3>
+        
+        <article class="post-item">
+            <header class="post-item-header">
+                <h4 class="post-item-title">
+                    <a href="/blog/2022/04/29/%E5%8E%BB%E6%8E%89%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%89%8D%E5%90%8E%E7%A9%BA%E6%A0%BC.html">去掉一个字符串前后空格</a>
+                </h4>
+                <div class="post-item-meta">
+                    <time datetime="2022-04-29T00:00:00+08:00">2022年04月29日</time>
+                    
+                    <span class="post-item-categories">
+                        
+                        <a href="/categories/#面试合集">面试合集</a>
+                        , 
+                        
+                        <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                        
+                        
+                    </span>
+                    
+                </div>
+            </header>
+            <div class="post-item-excerpt">
+                
+                    问题：给定一个字符串，实现一个方法，去掉该字符串的前后空格。(不使用字符串自带的trim、trimEnd、trimLeft、trimRight、trimStart)
+
+
+  方法1：利用正则实现
+```javascript
+var str = ‘  111  222  3 ‘
+function trim(str){
+ return str.replace(/^\s+|\s+$/g, ‘’)
+...
+                    <a href="/blog/2022/04/29/%E5%8E%BB%E6%8E%89%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%89%8D%E5%90%8E%E7%A9%BA%E6%A0%BC.html" class="read-more">阅读更多</a>
+                
+            </div>
+        </article>
+        
+        <article class="post-item">
+            <header class="post-item-header">
+                <h4 class="post-item-title">
+                    <a href="/blog/2022/04/12/js%E5%8D%95%E7%BA%BF%E7%A8%8B%E5%92%8C%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF.html">js单线程和事件循环</a>
+                </h4>
+                <div class="post-item-meta">
+                    <time datetime="2022-04-12T00:00:00+08:00">2022年04月12日</time>
+                    
+                    <span class="post-item-categories">
+                        
+                        <a href="/categories/#面试合集">面试合集</a>
+                        , 
+                        
+                        <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                        
+                        
+                    </span>
+                    
+                </div>
+            </header>
+            <div class="post-item-excerpt">
+                
+                    先直接上例子看：
+例子1：
+console.log('ssssss')
+var p = new Promise((resolve, reject)=&gt;{
+    console.log('121')
+    resolve('121===')
+})
+p.then(val=&gt;{
+    console.log('122')
+    console.log(val)
+})
+conso...
+                    <a href="/blog/2022/04/12/js%E5%8D%95%E7%BA%BF%E7%A8%8B%E5%92%8C%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF.html" class="read-more">阅读更多</a>
+                
+            </div>
+        </article>
+        
+        <article class="post-item">
+            <header class="post-item-header">
+                <h4 class="post-item-title">
+                    <a href="/blog/2022/04/12/bind-call-apply%E5%87%BD%E6%95%B0%E7%9A%84%E5%8C%BA%E5%88%AB%E5%8F%8A%E5%87%A0%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%94%A8%E6%B3%95.html">bind、call、apply函数的区别及几种常见用法</a>
+                </h4>
+                <div class="post-item-meta">
+                    <time datetime="2022-04-12T00:00:00+08:00">2022年04月12日</time>
+                    
+                    <span class="post-item-categories">
+                        
+                        <a href="/categories/#面试合集">面试合集</a>
+                        , 
+                        
+                        <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                        
+                        
+                    </span>
+                    
+                </div>
+            </header>
+            <div class="post-item-excerpt">
+                
+                    讲区别之前，先讲一下三者的共同点：
+
+  
+    都是用来改变函数的this对象的指向的。
+    第一个参数都是this要指向的对象。
+    都可以利用后续参数传参。
+  
+
+
+三者的区别：
+
+  
+    call/apply都是对函数的直接调用。二者传参有区别。  call(this,arg1,arg2,…)  /  apply(this,[arg1,arg2,…])
+    bi...
+                    <a href="/blog/2022/04/12/bind-call-apply%E5%87%BD%E6%95%B0%E7%9A%84%E5%8C%BA%E5%88%AB%E5%8F%8A%E5%87%A0%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%94%A8%E6%B3%95.html" class="read-more">阅读更多</a>
+                
+            </div>
+        </article>
+        
+        <article class="post-item">
+            <header class="post-item-header">
+                <h4 class="post-item-title">
+                    <a href="/blog/2022/04/12/js%E4%B8%ADthis%E6%8C%87%E5%90%91%E9%97%AE%E9%A2%98.html">js中的this指向问题</a>
+                </h4>
+                <div class="post-item-meta">
+                    <time datetime="2022-04-12T00:00:00+08:00">2022年04月12日</time>
+                    
+                    <span class="post-item-categories">
+                        
+                        <a href="/categories/#面试合集">面试合集</a>
+                        , 
+                        
+                        <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                        
+                        
+                    </span>
+                    
+                </div>
+            </header>
+            <div class="post-item-excerpt">
+                
+                    先说结论。
+总结的规律：
+
+  
+    普通函数。普通函数体内的this对象，指向调用该函数时候的对象的this。严格模式下（设置’use strict’），this指向undefined。
+    箭头函数。箭头函数体内的this对象，指向该函数所在的作用域（这里的作用域就简单理解成一个函数吧，虽然不太准确）指向的对象。即使call()、apply()、bind()方法也不能改变箭头函数...
+                    <a href="/blog/2022/04/12/js%E4%B8%ADthis%E6%8C%87%E5%90%91%E9%97%AE%E9%A2%98.html" class="read-more">阅读更多</a>
+                
+            </div>
+        </article>
+        
+        <article class="post-item">
+            <header class="post-item-header">
+                <h4 class="post-item-title">
+                    <a href="/blog/2021/05/31/%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1%E6%98%AF%E5%90%A6%E6%9C%89%E6%9F%90%E4%B8%AA%E5%B1%9E%E6%80%A7.html">判断一个对象是否有某个属性</a>
+                </h4>
+                <div class="post-item-meta">
+                    <time datetime="2021-05-31T00:00:00+08:00">2021年05月31日</time>
+                    
+                    <span class="post-item-categories">
+                        
+                        <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                        
+                        
+                    </span>
+                    
+                </div>
+            </header>
+            <div class="post-item-excerpt">
+                
+                    判断一个对象是否具有某个属性，以前只知道 hasOwnProperty 这个方法。最近看到还有 in 这种方式，故记录一下。
+
+let a = {
+    b: 1
+}
+
+
+
+  hasOwnProperty
+
+
+a.hasOwnProperty('b') // true
+
+
+
+  in
+
+
+('b' in a) // true
+
+
+如图：
+
+
+                    <a href="/blog/2021/05/31/%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1%E6%98%AF%E5%90%A6%E6%9C%89%E6%9F%90%E4%B8%AA%E5%B1%9E%E6%80%A7.html" class="read-more">阅读更多</a>
+                
+            </div>
+        </article>
+        
+    </section>
+
+    <!-- 分页导航 -->
+    
+    <nav class="pagination">
+        
+        <a href="/blog/page2/" class="prev-page">上一页</a>
+        
+        
+        <span class="page-number">第 3 页，共 8 页</span>
+        
+        
+        <a href="/blog/page4/" class="next-page">下一页</a>
+        
+    </nav>
+    
+</div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

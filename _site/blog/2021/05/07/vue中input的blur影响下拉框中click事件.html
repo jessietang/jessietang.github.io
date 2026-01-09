@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vue中input的blur影响下拉框中click事件 | Jessie's Blog</title>
+    <meta name="description" content="问题描述:存在如下一段代码：&lt;input ref="input" class="search-box" placeholder="请输入要搜索的内容" v-model="keyWords" @input="search()" @focus="focusSearch()" @blur="onBlur()"/&...">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+    <header class="post-header">
+        <h1 class="post-title">vue中input的blur影响下拉框中click事件</h1>
+        <div class="post-meta">
+            <time datetime="2021-05-07T00:00:00+08:00">2021年05月07日</time>
+            
+            <span class="post-categories">
+                
+                <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                , 
+                
+                <a href="/categories/#vue">Vue</a>
+                
+                
+            </span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+        <h3 id="问题描述">问题描述:</h3>
+
+<p>存在如下一段代码：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;input ref="input" class="search-box" placeholder="请输入要搜索的内容" v-model="keyWords" @input="search()" @focus="focusSearch()" @blur="onBlur()"/&gt;
+
+&lt;div class="result-list" v-if="showComplete"&gt;
+    &lt;div class="result-item" v-if="searchResultList.length === 0"&gt;没有找到对应内容&lt;/div&gt;
+    &lt;div class="result-item" v-for="r in searchResultList" :key="r.id" @click="toSearch([r])"&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+onBlur(){
+    console.log('blur')
+    this.showComplete = false
+}
+toSearch(nodes){
+    console.log('click')
+    // do sth...
+    this.$nextTick(()=&gt;{
+        this.keyWords = '';
+    })
+}
+</code></pre></div></div>
+
+<p>输入框输入关键字搜索，选择下拉框里匹配的某一条数据后，click 无法执行。主要原因是。blur 的优先级比 click 高，先触发了 blur 事件 showComplete = false,下拉列表注销，click 无法执行。</p>
+
+<h3 id="解决办法">解决办法</h3>
+
+<ol>
+  <li>解决办法一：blur 执行的函数可以加个定时器，在 200ms 后执行</li>
+</ol>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>onBlur(){
+      console.log('blur')
+      setTimeout(()=&gt;{
+        this.showComplete = false
+      },200)
+},
+</code></pre></div></div>
+
+<ol>
+  <li>解决办法二：将 click 换成优先级更高的 mousedown，将优先于 blur 执行</li>
+</ol>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;div class="result-item" v-for="r in searchResultList" :key="r.id" @mousedown="toSearch([r])"&gt;&lt;/div&gt;
+</code></pre></div></div>
+
+    </div>
+
+    <div class="post-navigation">
+        
+        <div class="prev-post">
+            <a href="/blog/2021/05/07/json-tree%E5%BD%A2%E6%95%B0%E6%8D%AE%E6%9F%A5%E6%89%BE%E5%A4%8D%E5%90%88%E6%9D%A1%E4%BB%B6%E7%9A%84json-tree%E6%95%B0%E6%8D%AE.html">
+                <span>上一篇</span>
+                json tree形数据查找复合条件的json tree数据
+            </a>
+        </div>
+        
+        
+        <div class="next-post">
+            <a href="/blog/2021/05/07/%E8%A7%A3%E5%86%B3oninput%E4%BA%8B%E4%BB%B6%E5%9C%A8%E4%B8%AD%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95%E4%B8%8B%E4%BC%9A%E5%8F%96%E5%BE%97%E6%8B%BC%E9%9F%B3%E7%9A%84%E5%80%BC%E7%9A%84%E9%97%AE%E9%A2%98.html">
+                <span>下一篇</span>
+                解决oninput事件在中文输入法下会取得拼音的值的问题
+            </a>
+        </div>
+        
+    </div>
+</article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

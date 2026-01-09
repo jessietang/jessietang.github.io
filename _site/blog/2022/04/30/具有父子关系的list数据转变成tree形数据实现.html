@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>具有父子关系的list数据转变成tree形数据实现 | Jessie's Blog</title>
+    <meta name="description" content="我们在实际开发需求的过程中，经常会遇到需要把list形式的数据，转成tree形的数据的场景。那么，是否可以写一个通用的方法来处理这种情形呢？直接上代码：const getTreeFromRows = (  rows,  rootId,  idKey = 'id',  parentKey = 'parent',  ...">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+    <header class="post-header">
+        <h1 class="post-title">具有父子关系的list数据转变成tree形数据实现</h1>
+        <div class="post-meta">
+            <time datetime="2022-04-30T00:00:00+08:00">2022年04月30日</time>
+            
+            <span class="post-categories">
+                
+                <a href="/categories/#面试合集">面试合集</a>
+                , 
+                
+                <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                
+                
+            </span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+        <h4 id="我们在实际开发需求的过程中经常会遇到需要把list形式的数据转成tree形的数据的场景那么是否可以写一个通用的方法来处理这种情形呢">我们在实际开发需求的过程中，经常会遇到需要把list形式的数据，转成tree形的数据的场景。那么，是否可以写一个通用的方法来处理这种情形呢？</h4>
+
+<p>直接上代码：</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">getTreeFromRows</span> <span class="o">=</span> <span class="p">(</span>
+  <span class="nx">rows</span><span class="p">,</span>
+  <span class="nx">rootId</span><span class="p">,</span>
+  <span class="nx">idKey</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">id</span><span class="dl">'</span><span class="p">,</span>
+  <span class="nx">parentKey</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">parent</span><span class="dl">'</span><span class="p">,</span>
+  <span class="nx">labelKey</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">name</span><span class="dl">'</span>
+<span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">function</span> <span class="nf">getNodes</span><span class="p">(</span><span class="nx">rows</span><span class="p">,</span> <span class="nx">rootId</span><span class="p">,</span> <span class="nx">currentNodes</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">rows</span>
+      <span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nx">item</span> <span class="o">=&gt;</span> <span class="nx">item</span><span class="p">[</span><span class="nx">parentKey</span><span class="p">]</span> <span class="o">==</span> <span class="nx">rootId</span><span class="p">)</span>
+      <span class="p">.</span><span class="nf">forEach</span><span class="p">(</span><span class="nx">row</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">children</span> <span class="o">=</span> <span class="nf">getNodes</span><span class="p">(</span><span class="nx">rows</span><span class="p">,</span> <span class="nx">row</span><span class="p">[</span><span class="nx">idKey</span><span class="p">],</span> <span class="p">[])</span>
+        <span class="k">if </span><span class="p">(</span><span class="o">!</span><span class="nx">children</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="nx">children</span> <span class="o">=</span> <span class="kc">null</span>
+        <span class="nx">currentNodes</span><span class="p">.</span><span class="nf">push</span><span class="p">({</span>
+          <span class="p">...</span><span class="nx">row</span><span class="p">,</span>
+          <span class="na">id</span><span class="p">:</span> <span class="nx">row</span><span class="p">[</span><span class="nx">idKey</span><span class="p">],</span>
+          <span class="na">label</span><span class="p">:</span> <span class="nx">row</span><span class="p">[</span><span class="nx">labelKey</span><span class="p">],</span>
+          <span class="na">checked</span><span class="p">:</span> <span class="nx">row</span><span class="p">.</span><span class="nx">checked</span> <span class="o">||</span> <span class="kc">false</span><span class="p">,</span>
+          <span class="nx">children</span>
+        <span class="p">})</span>
+      <span class="p">})</span>
+
+    <span class="k">return</span> <span class="nx">currentNodes</span>
+  <span class="p">}</span>
+
+  <span class="kd">let</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="nf">getNodes</span><span class="p">(</span><span class="nx">rows</span><span class="p">,</span> <span class="nx">rootId</span><span class="p">,</span> <span class="p">[])</span>
+  <span class="kd">let</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">rows</span><span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nx">item</span> <span class="o">=&gt;</span> <span class="nx">item</span><span class="p">[</span><span class="nx">idKey</span><span class="p">]</span> <span class="o">==</span> <span class="nx">rootId</span><span class="p">)</span>
+  <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span><span class="p">.</span><span class="nx">length</span> <span class="p">?</span> <span class="nx">root</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">:</span> <span class="kc">null</span>
+  <span class="k">if </span><span class="p">(</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">nodes</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="p">...</span><span class="nx">root</span><span class="p">,</span>
+        <span class="na">id</span><span class="p">:</span> <span class="nx">root</span><span class="p">[</span><span class="nx">idKey</span><span class="p">],</span>
+        <span class="na">label</span><span class="p">:</span> <span class="nx">root</span><span class="p">[</span><span class="nx">labelKey</span><span class="p">],</span>
+        <span class="na">checked</span><span class="p">:</span> <span class="nx">root</span><span class="p">.</span><span class="nx">checked</span> <span class="o">||</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="na">children</span><span class="p">:</span> <span class="nx">nodes</span>
+      <span class="p">}</span>
+    <span class="p">]</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">nodes</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+    </div>
+
+    <div class="post-navigation">
+        
+        <div class="prev-post">
+            <a href="/blog/2022/04/30/findIndex(numArr,-sum)%E7%94%A8%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E6%98%AFo(n)%E7%9A%84%E7%AE%97%E6%B3%95%E6%9D%A5%E5%AE%9E%E7%8E%B0.html">
+                <span>上一篇</span>
+                findIndex(numArr, sum)用时间复杂度是o(n)的算法来实现
+            </a>
+        </div>
+        
+        
+        <div class="next-post">
+            <a href="/blog/2022/04/30/%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%9B%91%E5%90%AC%E8%AE%A2%E9%98%85%E8%80%85%E6%A8%A1%E5%BC%8F.html">
+                <span>下一篇</span>
+                实现一个简单的监听订阅者模式
+            </a>
+        </div>
+        
+    </div>
+</article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

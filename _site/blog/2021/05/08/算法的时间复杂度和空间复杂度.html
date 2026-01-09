@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>算法的时间复杂度和空间复杂度 | Jessie's Blog</title>
+    <meta name="description" content="前言如何衡量算法的优劣呢？主要从算法所占用的“时间”和“空间”去衡量。时间维度：是指执行当前算法所消耗的时间，我们通常用【时间复杂度】来描述空间维度：是指执行当前算法需要占用多少内存空间，我们通常用【空间复杂度】来描述大 O 复杂度表示法算法执行的效率。通俗的讲，就是算法代码执行的时间。简单看个例子：var m ...">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+    <header class="post-header">
+        <h1 class="post-title">算法的时间复杂度和空间复杂度</h1>
+        <div class="post-meta">
+            <time datetime="2021-05-08T00:00:00+08:00">2021年05月08日</time>
+            
+            <span class="post-categories">
+                
+                <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                
+                
+            </span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+        <h3 id="前言">前言</h3>
+
+<p>如何衡量算法的优劣呢？主要从算法所占用的“时间”和“空间”去衡量。
+时间维度：是指执行当前算法所消耗的时间，我们通常用【时间复杂度】来描述
+空间维度：是指执行当前算法需要占用多少内存空间，我们通常用【空间复杂度】来描述</p>
+
+<h3 id="大-o-复杂度表示法">大 O 复杂度表示法</h3>
+
+<p>算法执行的效率。通俗的讲，就是算法代码执行的时间。
+简单看个例子：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>var m = 0;
+for(i=1; i&lt;=n; ++i)
+{
+   j = i;
+   j++;
+}
+</code></pre></div></div>
+
+<p>从 CPU 的角度来看，这段代码的每一行都执行着类似的操作：读数据-运算-写数据。尽管每行代码对应的 CPU 执行的个数、执行的时间都不一样，但是，我们这里只是粗略估计，所以可以假设每行代码执行的时间都一样，为 unit_time。在这个假设的基础之上，这段代码的总执行时间是多少呢？
+line1 执行需要 1 个 unit_time 时间，line2,line4,line5 都执行的 n 遍，所以需要 n+n+n=3n 个 unit_time 的执行时间。所以这段代码的总执行时间就是：(1+3n)unit_time。
+从这个结果可以看出，这个算法的耗时是【 随着 n 的变化而变化 】，因此，我们可以简化的将这个算法的时间复杂度表示为：T(n) = O(n)
+为什么可以这么去简化呢，因为大 O 符号表示法并不是用于来真实代表算法的执行时间的，它是【 用来表示代码执行时间的增长变化趋势的 】。
+所以上面的例子中，如果 n 无限大的时候，T(n) = time(1+3n)中的常量 1 就没有意义了，倍数 3 也意义不大。因此直接简化为 T(n) = O(n) 就可以了。</p>
+
+<p>在 大 O 符号表示法中，时间复杂度的公式是： T(n) = O( f(n) )，其中 f(n) 表示每行代码执行次数之和，而 O 表示正比例关系，这个公式的全称是：算法的渐进时间复杂度。</p>
+
+<h3 id="时间复杂度">时间复杂度</h3>
+
+<p>常见的时间复杂度量级有：</p>
+
+<p>常数阶 O(1)
+对数阶 O(logN)
+线性阶 O(n)
+线性对数阶 O(nlogN)
+平方阶 O(n²)
+立方阶 O(n³)
+K 次方阶 O(n^k)
+指数阶(2^n)
+上面从上至下依次的时间复杂度越来越大，执行的效率越来越低。</p>
+
+<p>选取上面几个来分析：</p>
+
+<ol>
+  <li>
+    <p>常数阶 O(1)
+无论执行了多少行，只要是没有循环等复杂结构，那这个代码的时间复杂度就是 O(1)，如：</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>var m = 0;
+var n = 1;
+var test = m + n;
+</code></pre></div>    </div>
+
+    <p>上述代码在执行的时候，它消耗的时候并不随着某个变量的增长而增长，那么无论这类代码有多长，即使有几万几十万行，都可以用 O(1)来表示它的时间复杂度。</p>
+  </li>
+  <li>
+    <p>线性阶 O(n)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>var m = 1;
+for(i=1; i&lt;=n; ++i)
+{
+ m = i;
+}
+
+</code></pre></div>    </div>
+
+    <p>这段代码，for 循环里面的代码会执行 n 遍，因此它消耗的时间是随着 n 的变化而变化的，因此这类代码都可以用 O(n)来表示它的时间复杂度。</p>
+  </li>
+  <li>
+    <p>对数阶 O(logN)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>var i = 1;
+while(i&lt;n)
+{
+    i = i * 2;
+}
+</code></pre></div>    </div>
+
+    <p>上面代码中，在 while 循环里，每次都将 i 乘以 2，乘完之后，i 距离 n 越来越近了。假设循环 x 次之后，i 就大于 n 了，此时这个循环就退出了。也就是说，2 的 x 次方等于 n。求出 x=log2(n) 即：log 以 2 为底 n 的对数。也就是说，当循环 log2(n)次以后，这个代码就结束了。因此这个代码的时间复杂度为：O(logn)</p>
+  </li>
+  <li>
+    <p>线性对数阶 O(nlogN)
+线性对数阶 O(nlogN) 其实非常容易理解，将时间复杂度为 O(logn)的代码循环 N 遍的话，那么它的时间复杂度就是 n 乘以 O(logN)，也就是了 O(nlogN)。</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>for(var i=0; i&lt;n; i++){
+    m = 1
+    while(m &lt; n){
+        m = m * 2
+    }
+}
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>平方阶 O(n²)
+把 O(n) 的代码再嵌套循环一遍，它的时间复杂度就是 O(n²)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>var test = 1;
+for(x=0; x&lt;n; x++){
+    for(y=0; y&lt;n; y++){
+        test = x+y
+    }
+}
+</code></pre></div>    </div>
+
+    <p>如果将其中的一层循环 n 改成 m,那么时间复杂度就是 O(m*n)：</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>var test = 1;
+for(x=0; x&lt;m; x++){
+    for(y=0; y&lt;n; y++){
+        test = x+y
+    }
+}
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h3 id="空间复杂度">空间复杂度</h3>
+
+<p>既然时间复杂度不是用来计算程序具体耗时的，那么空间复杂度也不是用来计算程序实际占用的空间的。
+空间复杂度是对一个算法在运行过程中临时占用存储空间大小的一个衡量，同样反映的是一个趋势，用 S(n)来定义。</p>
+
+<p>空间复杂度比较常用的有：
+O(1)、O(n)、O(n²)</p>
+
+<ol>
+  <li>
+    <p>空间复杂度 O(1)
+如果算法执行所需要的临时空间不随着某个变量 n 的大小而变化，即此算法空间复杂度为一个常量，可表示为 O(1)
+例如：</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>var i = 0;
+var m = 1;
+i++;
+m++;
+var n = m + i;
+</code></pre></div>    </div>
+
+    <p>代码中的 i,m,n 所分配的空间都不随着处理数据变化，因此它的空间复杂度为 S(n) = O(1)</p>
+  </li>
+  <li>
+    <p>空间复杂度 O(n)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>int[] m = new int[n]
+for(i=1; i&lt;=n; ++i)
+{
+ j = i;
+ j++;
+}
+</code></pre></div>    </div>
+
+    <p>这段代码中，line1 new 了一个数组出来，这个数据占用的大小为 n,这段代码的 line2-6, 虽然有循环，但是没有再分配新的空间，因此这段代码的空间复杂度主要看第一行即可。即：S(n) = O(n)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>function print(n) {
+     var i = 0;
+     var a = [];
+     for (i; i &lt;n; ++i) {
+         a[i] = i * i;
+     }
+     for (i = n-1; i &gt;= 0; --i) {
+         console.log(a[i])
+     }
+}
+</code></pre></div>    </div>
+
+    <p>这段代码也是，代码中，line2 申请了一个空间存储变量 i，但是它是常量阶的，跟数据规模 n 没有关系，所以我们可以忽略。line3 申请了一个大小为 n 的 int 类型数组，除此之外，剩下的代码都没有占用更多的空间，所以整段代码的空间复杂度就是 O(n)。</p>
+  </li>
+</ol>
+
+    </div>
+
+    <div class="post-navigation">
+        
+        <div class="prev-post">
+            <a href="/blog/2021/05/07/%E8%A7%A3%E5%86%B3oninput%E4%BA%8B%E4%BB%B6%E5%9C%A8%E4%B8%AD%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95%E4%B8%8B%E4%BC%9A%E5%8F%96%E5%BE%97%E6%8B%BC%E9%9F%B3%E7%9A%84%E5%80%BC%E7%9A%84%E9%97%AE%E9%A2%98.html">
+                <span>上一篇</span>
+                解决oninput事件在中文输入法下会取得拼音的值的问题
+            </a>
+        </div>
+        
+        
+        <div class="next-post">
+            <a href="/blog/2021/05/08/react-%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%99%9A%E6%8B%9Fdom%E5%92%8Cdiff%E7%AE%97%E6%B3%95.html">
+                <span>下一篇</span>
+                （react）深入理解虚拟dom和diff算法
+            </a>
+        </div>
+        
+    </div>
+</article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

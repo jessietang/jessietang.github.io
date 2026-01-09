@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jsdoc的使用 | Jessie's Blog</title>
+    <meta name="description" content="需要一个工具—javascript API 文档生成器我们在开发完成之后，需要写一份 js api 说明文档。手动去写，太麻烦了，而且，如果改动了 js 代码或者注释之类的，需要同时更新 api 文档，比较麻烦。所以，我们可以使用jsdoc这个工具来进行文档的转换。      用 conf.json 配置 jsd...">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+    <header class="post-header">
+        <h1 class="post-title">jsdoc的使用</h1>
+        <div class="post-meta">
+            <time datetime="2021-05-17T00:00:00+08:00">2021年05月17日</time>
+            
+            <span class="post-categories">
+                
+                <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                
+                
+            </span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+        <h3 id="需要一个工具javascript-api-文档生成器">需要一个工具—javascript API 文档生成器</h3>
+
+<p>我们在开发完成之后，需要写一份 js api 说明文档。手动去写，太麻烦了，而且，如果改动了 js 代码或者注释之类的，需要同时更新 api 文档，比较麻烦。
+所以，我们可以使用<a href="http://shouce.jb51.net/jsdoc/">jsdoc</a>这个工具来进行文档的转换。</p>
+
+<ol>
+  <li>
+    <p>用 conf.json 配置 jsdoc
+要自定义 JSDoc 的行为，可以使用 JSON 格式的配置文件格式化 JSDoc，使用-c 选项，例如： jsdoc -c /path/to/conf.json。</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+ "opts": {
+     "recurse": true
+ },
+ "tags": {
+     "allowUnknownTags": true,
+     "dictionaries": [
+         "jsdoc",
+         "closure"
+     ]
+ },
+ "source": {
+     "include": [
+         "src/demo/Test.js",
+         "src/demo/funcs/views/",
+         "src/demo/funcs/models/"
+     ],
+     "includePattern": ".+\\.js(doc)?$",
+     "excludePattern": "(^|\\/|\\\\)_"
+ },
+ "plugins": [],
+ "templates": {
+     "cleverLinks": false,
+     "monospaceLinks": false,
+     "default": {
+         "includeDate": false,
+         "outputSourceFiles": false,
+         "layoutFile": "jsdoc/template/layout.tmpl"
+     }
+ }
+}
+
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>使用自定义模板 layout.tmpl
+这里为了方便， 我直接从 github jsdoc 源码里找到了一个 layout.tmpl 原来的模板, 如下（我修改了引入的 js 文件和 css 文件的路径，要跟执行<code class="language-plaintext highlighter-rouge">jsdoc -c ./jsdoc/path/to/conf.json -r</code>之后生产的文件里面的这些文件匹配，最开始就是没看到这里路径的不同，所以自定义模板一直没起作用）：</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+   &lt;meta charset="utf-8"&gt;
+   &lt;title&gt;JSDoc: &lt;?js= title ?&gt;&lt;/title&gt;
+
+   &lt;script src="./scripts/prettify/prettify.js"&gt; &lt;/script&gt;
+   &lt;script src="./scripts/prettify/lang-css.js"&gt; &lt;/script&gt;
+   &lt;!--[if lt IE 9]&gt;
+   &lt;script src="//html5shiv.googlecode.com/svn/trunk/html5.js"&gt;&lt;/script&gt;
+   &lt;![endif]--&gt;
+   &lt;link type="text/css" rel="stylesheet" href="./styles/prettify-tomorrow.css"&gt;
+   &lt;link type="text/css" rel="stylesheet" href="./styles/jsdoc-default.css"&gt;
+   &lt;style&gt;
+   section{
+       border-bottom: none;
+   }
+   nav h2 {
+       display: none!important;
+   }
+   &lt;/style&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+
+&lt;div id="main"&gt;
+
+   &lt;h1 class="page-title"&gt;&lt;?js= title ?&gt;&lt;/h1&gt;
+
+   &lt;?js= content ?&gt;
+&lt;/div&gt;
+
+&lt;nav&gt;
+   &lt;?js= this.nav ?&gt;
+&lt;/nav&gt;
+
+&lt;br class="clear"&gt;
+
+&lt;footer&gt;
+   &lt;?js if(env.conf.templates &amp;&amp; env.conf.templates.default &amp;&amp; env.conf.templates.default.includeDate !== false) { ?&gt; on &lt;?js= (new Date()) ?&gt;&lt;?js } ?&gt;
+&lt;/footer&gt;
+
+&lt;script&gt; prettyPrint(); &lt;/script&gt;
+&lt;script src="./scripts/linenumber.js"&gt; &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>执行<code class="language-plaintext highlighter-rouge">jsdoc -c ./jsdoc/path/to/conf.json -r</code>命令，会生成一个 out 文件夹，里面的各个 html 就是转换结果，把 out 文件夹下面的东西拷贝到需要使用的地方即可。</p>
+  </li>
+</ol>
+
+    </div>
+
+    <div class="post-navigation">
+        
+        <div class="prev-post">
+            <a href="/blog/2021/05/11/%E6%89%8B%E5%86%99promise%E5%AE%9E%E7%8E%B0.html">
+                <span>上一篇</span>
+                手写promise实现
+            </a>
+        </div>
+        
+        
+        <div class="next-post">
+            <a href="/blog/2021/05/24/node%E5%BF%AB%E9%80%9F%E5%88%87%E6%8D%A2%E7%89%88%E6%9C%AC-%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7%E5%92%8C%E9%99%8D%E7%BA%A7.html">
+                <span>下一篇</span>
+                node快速切换版本、版本升级和降级
+            </a>
+        </div>
+        
+    </div>
+</article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

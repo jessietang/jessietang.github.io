@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>遍历生成的el-select值的绑定，选中一个其他不变 | Jessie's Blog</title>
+    <meta name="description" content="问题：在做项目的时候，table数据是动态获取的，table的某一列展示全是select下拉框，table的另一列是根据当前行有select的那一列选择的数据，来进行响应的操作。这个时候，每一个el-select组件绑定的值都是同一个，改变某一行的select的数据，其他行的都会跟着变（因为绑定的是同一个值）。简...">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+    <header class="post-header">
+        <h1 class="post-title">遍历生成的el-select值的绑定，选中一个其他不变</h1>
+        <div class="post-meta">
+            <time datetime="2022-09-02T00:00:00+08:00">2022年09月02日</time>
+            
+            <span class="post-categories">
+                
+                <a href="/categories/#vue">vue</a>
+                
+                
+            </span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+        <h4 id="问题在做项目的时候table数据是动态获取的table的某一列展示全是select下拉框table的另一列是根据当前行有select的那一列选择的数据来进行响应的操作这个时候每一个el-select组件绑定的值都是同一个改变某一行的select的数据其他行的都会跟着变因为绑定的是同一个值">问题：在做项目的时候，table数据是动态获取的，table的某一列展示全是select下拉框，table的另一列是根据当前行有select的那一列选择的数据，来进行响应的操作。这个时候，每一个el-select组件绑定的值都是同一个，改变某一行的select的数据，其他行的都会跟着变（因为绑定的是同一个值）。</h4>
+
+<p>简单点描述就是：有一个数据列表，例如：</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 源数据</span>
+<span class="kd">var</span> <span class="nx">tableData</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="na">id</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">第一行数据</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">types</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="na">id</span><span class="p">:</span> <span class="dl">'</span><span class="s1">t1</span><span class="dl">'</span><span class="p">,</span>
+                <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">aaa</span><span class="dl">'</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="na">id</span><span class="p">:</span> <span class="dl">'</span><span class="s1">t2</span><span class="dl">'</span><span class="p">,</span>
+                <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">bbb</span><span class="dl">'</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="na">id</span><span class="p">:</span> <span class="dl">'</span><span class="s1">t3</span><span class="dl">'</span><span class="p">,</span>
+                <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">ccc</span><span class="dl">'</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="na">id</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">第二行数据</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">types</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="na">id</span><span class="p">:</span> <span class="dl">'</span><span class="s1">t4</span><span class="dl">'</span><span class="p">,</span>
+                <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">ddd</span><span class="dl">'</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="na">id</span><span class="p">:</span> <span class="dl">'</span><span class="s1">t5</span><span class="dl">'</span><span class="p">,</span>
+                <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">eee</span><span class="dl">'</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="c1">// 操作方法</span>
+<span class="nf">handlePreview</span><span class="p">(</span><span class="nx">row</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">当前行选中的值为：</span><span class="dl">'</span> <span class="o">+</span> <span class="nx">row</span><span class="p">.</span><span class="nx">selectedValue</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>页面布局代码：</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;template&gt;</span>
+    <span class="nt">&lt;el-table</span>
+      <span class="na">:data=</span><span class="s">"tableData"</span>
+      <span class="na">style=</span><span class="s">"width: 100%"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;el-table-column</span>
+        <span class="na">prop=</span><span class="s">"name"</span>
+        <span class="na">label=</span><span class="s">"名字"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;/el-table-column&gt;</span>
+      <span class="nt">&lt;el-table-column</span>
+        <span class="na">prop=</span><span class="s">"types"</span>
+        <span class="na">label=</span><span class="s">"类别"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;template</span> <span class="na">slot-scope=</span><span class="s">"scope"</span><span class="nt">&gt;</span>
+            <span class="c">&lt;!-- 重点是这里怎么绑定v-model值 --&gt;</span>
+            <span class="nt">&lt;el-select</span> <span class="na">v-model=</span><span class="s">"scope.row.selectedValue"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;el-option</span> 
+                    <span class="na">v-for=</span><span class="s">"item in scope.row.types"</span> 
+                    <span class="na">:key=</span><span class="s">"item.id"</span> 
+                    <span class="na">:label=</span><span class="s">"item.name"</span> 
+                    <span class="na">:value=</span><span class="s">"item.id"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;/el-option&gt;</span>
+            <span class="nt">&lt;/el-select&gt;</span>
+        <span class="nt">&lt;/template&gt;</span>
+      <span class="nt">&lt;/el-table-column&gt;</span>
+      <span class="nt">&lt;el-table-column</span>
+        <span class="na">prop=</span><span class="s">""</span>
+        <span class="na">label=</span><span class="s">"操作"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;template</span> <span class="na">slot-scope=</span><span class="s">"scope"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;el-button</span> <span class="err">@</span><span class="na">click=</span><span class="s">"handlePreview(scope.row)"</span><span class="nt">&gt;</span>查看<span class="nt">&lt;/el-button&gt;</span>
+        <span class="nt">&lt;/template&gt;</span>
+      <span class="nt">&lt;/el-table-column&gt;</span>
+    <span class="nt">&lt;/el-table&gt;</span>
+  <span class="nt">&lt;/template&gt;</span>
+</code></pre></div></div>
+
+<p>解决思路： 只要让每一个选择器绑定的数据不一样就可以了，但拿到的tableData数组中的对象没有一个合适的属性去跟选择器绑定，那便新增一个属性好了。一开始，当前行数据scope.row里面没有selectedValue这个值，与其绑定的话，不会有值显示出来，后续点击选中某一项，scope.row就会新增selectedValue这个属性，属性值为选中的值，且其他行的选择器不受影响。</p>
+
+    </div>
+
+    <div class="post-navigation">
+        
+        <div class="prev-post">
+            <a href="/blog/2022/08/24/nuxt%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E5%88%B7%E6%96%B0%E6%8A%A5%E9%94%99%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3.html">
+                <span>上一篇</span>
+                nuxt生产环境报错:Failed to execute 'appendChild' on 'Node'
+            </a>
+        </div>
+        
+        
+        <div class="next-post">
+            <a href="/blog/2022/10/10/js%E5%AE%9E%E7%8E%B0html%E8%BD%AC%E4%B9%89%E5%8F%8A%E5%8F%8D%E8%BD%AC%E4%B9%89.html">
+                <span>下一篇</span>
+                js实现html转义及反转义
+            </a>
+        </div>
+        
+    </div>
+</article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

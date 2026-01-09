@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bind、call、apply函数的区别及几种常见用法 | Jessie's Blog</title>
+    <meta name="description" content="讲区别之前，先讲一下三者的共同点：      都是用来改变函数的this对象的指向的。    第一个参数都是this要指向的对象。    都可以利用后续参数传参。  三者的区别：      call/apply都是对函数的直接调用。二者传参有区别。  call(this,arg1,arg2,…)  /  appl...">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+    <header class="post-header">
+        <h1 class="post-title">bind、call、apply函数的区别及几种常见用法</h1>
+        <div class="post-meta">
+            <time datetime="2022-04-12T00:00:00+08:00">2022年04月12日</time>
+            
+            <span class="post-categories">
+                
+                <a href="/categories/#面试合集">面试合集</a>
+                , 
+                
+                <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                
+                
+            </span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+        <h4 id="讲区别之前先讲一下三者的共同点">讲区别之前，先讲一下三者的共同点：</h4>
+<blockquote>
+  <ol>
+    <li>都是用来改变函数的this对象的指向的。</li>
+    <li>第一个参数都是this要指向的对象。</li>
+    <li>都可以利用后续参数传参。</li>
+  </ol>
+</blockquote>
+
+<h4 id="三者的区别">三者的区别：</h4>
+<blockquote>
+  <ol>
+    <li>call/apply都是对函数的直接调用。二者传参有区别。 <br /> call(this,arg1,arg2,…)  /  apply(this,[arg1,arg2,…])</li>
+    <li>bind函数返回的还是一个函数。【后面写一个bind函数的实现】<br /> bind(thisArgs, arg1, arg2, …)</li>
+  </ol>
+</blockquote>
+
+<p> </p>
+
+<h4 id="1-先来说说bind函数">1. 先来说说bind函数</h4>
+
+<h4 id="bind函数的几种常见用法">bind函数的几种常见用法：</h4>
+
+<h5 id="1-偏函数使一个函数拥有预设的初始参数">1. 偏函数。使一个函数拥有预设的初始参数。</h5>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">add</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">x+y</span><span class="dl">'</span><span class="p">,</span> <span class="nx">x</span><span class="o">+</span><span class="nx">y</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="kd">var</span> <span class="nx">add1</span> <span class="o">=</span> <span class="nf">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="c1">// x+y 3</span>
+
+<span class="kd">var</span> <span class="nx">add2</span> <span class="o">=</span> <span class="nx">add</span><span class="p">.</span><span class="nf">bind</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+<span class="nf">add2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="c1">// x+y 100+1 = 101  第二个参数2无效</span>
+</code></pre></div></div>
+
+<h5 id="2-改变this指向">2. 改变this指向</h5>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 在默认情况下，使用 window.setTimeout() 时，this 关键字会指向 window （或 global）对象。</span>
+<span class="c1">// 当类的方法中需要 this 指向类的实例时，你可能需要显式地把 this 绑定到回调函数，就不会丢失该实例的引用。</span>
+<span class="kd">function</span> <span class="nf">Test</span><span class="p">(){</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="p">}</span>
+<span class="nx">Test</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">boom</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nf">setTimeout</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">declare</span><span class="p">.</span><span class="nf">bind</span><span class="p">(</span><span class="k">this</span><span class="p">),</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="nx">Test</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">declare</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="kd">var</span> <span class="nx">test</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Test</span><span class="p">()</span>
+<span class="nx">test</span><span class="p">.</span><span class="nf">boom</span><span class="p">()</span> <span class="c1">// 1 Test{x: 1}</span>
+</code></pre></div></div>
+
+<h4 id="来实现一个简易的bind函数需要注意的是bind函数返回的还是一个函数">来实现一个简易的bind函数，需要注意的是，bind函数返回的还是一个函数：</h4>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 简易实现</span>
+<span class="nb">Function</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">myBind</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">context</span><span class="p">){</span>
+    <span class="kd">var</span> <span class="nb">self</span> <span class="o">=</span> <span class="k">this</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">(){</span>
+        <span class="c1">// 把当前函数(调用myBind方法的函数)的this，指向myBind的第一个参数对象的this</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nf">apply</span><span class="p">(</span><span class="nx">context</span><span class="p">)</span>
+    <span class="p">}</span>
+ <span class="p">}</span>
+
+ <span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span><span class="na">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+ <span class="kd">var</span> <span class="nx">fun</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+     <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">)</span>
+ <span class="p">}.</span><span class="nf">myBind</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span>
+ <span class="nf">fun</span><span class="p">()</span> <span class="c1">// 1</span>
+
+</code></pre></div></div>
+
+<h4 id="bind函数复杂一点的实现">bind函数复杂一点的实现：</h4>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="c1">// bind函数复杂一点的实现</span>
+ <span class="nb">Function</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">myBind</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+     <span class="c1">// 这个地方的arguments是myBind这个function的arguments</span>
+     <span class="kd">var</span> <span class="nb">self</span> <span class="o">=</span> <span class="k">this</span>
+     <span class="kd">var</span> <span class="nx">context</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">shift</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">)</span>
+     <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="p">[].</span><span class="nx">slice</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">)</span>
+     <span class="k">return</span> <span class="kd">function</span><span class="p">(){</span>
+         <span class="c1">// 这个地方的arguments是当前return这个function的arguments</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nf">apply</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="p">[].</span><span class="nx">concat</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="p">[].</span><span class="nx">slice</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">)))</span>
+     <span class="p">}</span>
+ <span class="p">}</span>
+
+ <span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span><span class="na">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+ <span class="kd">var</span> <span class="nx">fun</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">m</span><span class="p">,</span><span class="nx">n</span><span class="p">){</span>
+     <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span><span class="nx">n</span><span class="p">)</span>
+ <span class="p">}.</span><span class="nf">myBind</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span><span class="mi">300</span><span class="p">)</span>
+ <span class="nf">fun</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="c1">// 1 300 100</span>
+</code></pre></div></div>
+
+<h4 id="2-上面的这个bind函数实现涉及到较多关于call和apply的使用下面来说一下这俩">2. 上面的这个bind函数实现，涉及到较多关于call和apply的使用。下面来说一下这俩。</h4>
+
+<h4 id="call和apply函数的几种常见用法">call和apply函数的几种常见用法：</h4>
+
+<h5 id="1-改变this指向">1. 改变this指向</h5>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">person1</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">p1</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">age</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="na">sayHello</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">sex</span><span class="p">){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="o">+</span><span class="dl">'</span><span class="s1">今年</span><span class="dl">'</span><span class="o">+</span><span class="k">this</span><span class="p">.</span><span class="nx">age</span><span class="o">+</span><span class="dl">'</span><span class="s1">岁，性别：</span><span class="dl">'</span><span class="o">+</span><span class="nx">sex</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">person2</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">p2</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">age</span><span class="p">:</span> <span class="mi">22</span>
+<span class="p">}</span>
+
+<span class="nx">person1</span><span class="p">.</span><span class="nx">sayHello</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="nx">person2</span><span class="p">,</span> <span class="dl">'</span><span class="s1">女</span><span class="dl">'</span><span class="p">)</span> <span class="c1">// p2今年22岁，性别：女</span>
+</code></pre></div></div>
+
+<h5 id="2-借用其他对象的方法这点经常使用比较常见">2. 借用其他对象的方法（这点经常使用，比较常见）</h5>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kd">var</span> <span class="nx">funs</span> <span class="o">=</span> <span class="p">[]</span>
+
+ <span class="kd">const</span> <span class="nx">fun1</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span><span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">fun1</span><span class="dl">'</span><span class="p">)}</span>
+ <span class="kd">const</span> <span class="nx">fun2</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span><span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">fun2</span><span class="dl">'</span><span class="p">)}</span>
+ <span class="kd">const</span> <span class="nx">fun3</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span><span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">fun3</span><span class="dl">'</span><span class="p">)}</span>
+
+ <span class="nx">funs</span><span class="p">.</span><span class="nf">push</span><span class="p">(</span><span class="nx">fun1</span><span class="p">)</span>
+ <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">push</span><span class="p">.</span><span class="nf">apply</span><span class="p">(</span><span class="nx">funs</span><span class="p">,[</span><span class="nx">fun2</span><span class="p">])</span>
+ <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">push</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="nx">funs</span><span class="p">,</span><span class="nx">fun3</span><span class="p">)</span>
+ <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nx">funs</span><span class="p">)</span> <span class="c1">// [f,f,f]</span>
+
+ <span class="kd">const</span> <span class="nx">firstFun</span> <span class="o">=</span> <span class="p">[].</span><span class="nx">shift</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="nx">funs</span><span class="p">)</span> <span class="c1">// 把funs里面的第一个踢出来</span>
+ <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nx">firstFun</span><span class="p">)</span> <span class="c1">// ƒ (){console.log('fun1')}</span>
+
+ <span class="c1">// 输出fun2fun3</span>
+ <span class="nx">funs</span><span class="p">.</span><span class="nf">forEach</span><span class="p">(</span><span class="nx">i</span><span class="o">=&gt;</span><span class="p">{</span>
+     <span class="nx">i</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span><span class="p">.</span><span class="nx">call</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span><span class="p">.</span><span class="nf">call</span><span class="p">()</span> <span class="c1">// call第一个参数不传，非严格模式下，默认指向Window对象</span>
+ <span class="p">})</span>
+
+</code></pre></div></div>
+
+<p>再来一个示例：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kd">function</span> <span class="nf">test</span><span class="p">(){</span>
+     <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nx">arguments</span><span class="p">);</span>
+     <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">));</span>
+     <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="p">[].</span><span class="nx">slice</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">);</span>
+     <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
+     <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="nx">args</span><span class="p">));</span>
+ <span class="p">}</span>
+ <span class="nf">test</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+
+</code></pre></div></div>
+<p>上面示例输出如下：
+<img src="/assets/images/2204/1.jpg" alt="1.jpg" /></p>
+
+<p> 
+再来一个项目里面常用的示例：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kd">function</span> <span class="nf">EasyEmitter</span><span class="p">(){</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">emit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span><span class="nx">handler</span><span class="p">){</span>
+       <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">function</span> <span class="nf">MyFun</span><span class="p">(){</span>
+     <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+     <span class="k">this</span><span class="p">.</span><span class="nx">fun1</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+         <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">)</span>
+     <span class="p">}</span>
+     <span class="nx">EasyEmitter</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="c1">// 调用了这个，this上面就有EasyEmitter里面的方法了，如: emit方法</span>
+     <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="c1">// MyFun{x: 1, fun1: f, emit: f}  myFun对象上，有EasyEmitter里面的方法了</span>
+     <span class="k">this</span><span class="p">.</span><span class="nf">emit</span><span class="p">(</span><span class="dl">'</span><span class="s1">ddd</span><span class="dl">'</span><span class="p">,</span><span class="kc">null</span><span class="p">)</span> <span class="c1">// EasyEmitter里面的this，就指向MyFun对象了</span>
+ <span class="p">}</span>
+
+ <span class="kd">let</span> <span class="nx">myFun</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">MyFun</span><span class="p">()</span>
+ <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nx">myFun</span><span class="p">)</span> <span class="c1">// MyFun{x: 1, fun1: f, emit: f}  myFun对象上，有EasyEmitter里面的方法了</span>
+
+</code></pre></div></div>
+
+    </div>
+
+    <div class="post-navigation">
+        
+        <div class="prev-post">
+            <a href="/blog/2022/04/12/js%E4%B8%ADthis%E6%8C%87%E5%90%91%E9%97%AE%E9%A2%98.html">
+                <span>上一篇</span>
+                js中的this指向问题
+            </a>
+        </div>
+        
+        
+        <div class="next-post">
+            <a href="/blog/2022/04/12/js%E5%8D%95%E7%BA%BF%E7%A8%8B%E5%92%8C%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF.html">
+                <span>下一篇</span>
+                js单线程和事件循环
+            </a>
+        </div>
+        
+    </div>
+</article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

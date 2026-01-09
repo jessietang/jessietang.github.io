@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vue computed 属性为什么能够在依赖改变的时候，自己发生变化 | Jessie's Blog</title>
+    <meta name="description" content="Vue computed 属性为什么能够在依赖改变的时候，自己发生变化？computed 和 watch 公用一个 Watcher 类，在 computed 的情况下有一个 deps 。 Vue 在二次收集依赖时用 cleanupDeps 在每次添加完新的订阅，会移除掉旧的订阅。收集依赖  initState 时...">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+    <header class="post-header">
+        <h1 class="post-title">vue computed 属性为什么能够在依赖改变的时候，自己发生变化</h1>
+        <div class="post-meta">
+            <time datetime="2021-04-12T00:00:00+08:00">2021年04月12日</time>
+            
+            <span class="post-categories">
+                
+                <a href="/categories/#vue">Vue</a>
+                
+                
+            </span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+        <h3 id="vue-computed-属性为什么能够在依赖改变的时候自己发生变化">Vue computed 属性为什么能够在依赖改变的时候，自己发生变化？</h3>
+
+<p><img src="/assets/images/0412/1.png" alt="1.png" />
+computed 和 watch 公用一个 Watcher 类，在 computed 的情况下有一个 deps 。 Vue 在二次收集依赖时用 cleanupDeps 在每次添加完新的订阅，会移除掉旧的订阅。</p>
+
+<h3 id="收集依赖">收集依赖</h3>
+
+<ol>
+  <li>initState 时，对 computed 属性初始化时，触发 computed Watcher 依赖收集</li>
+  <li>initState 时，对 watch 属性初始化时，触发 user Watcher 依赖收集</li>
+  <li>render()的过程，触发 render watcher 依赖收集</li>
+  <li>re-render 时，vm.render()再次执行，会移除 subs 的订阅，重新赋值</li>
+</ol>
+
+<p>查看<a href="https://zhuanlan.zhihu.com/p/45081605">‘收集依赖’</a>更详细的解释。</p>
+
+    </div>
+
+    <div class="post-navigation">
+        
+        <div class="prev-post">
+            <a href="/blog/2021/04/06/%E7%94%B5%E5%AD%90%E4%B9%A6%E7%B1%8D%E5%BD%95.html">
+                <span>上一篇</span>
+                一些电子书籍链接记录
+            </a>
+        </div>
+        
+        
+        <div class="next-post">
+            <a href="/blog/2021/04/12/vue%E5%92%8Creact-diff-%E7%AE%97%E6%B3%95%E5%AF%B9%E6%AF%94.html">
+                <span>下一篇</span>
+                vue和react diff 算法对比
+            </a>
+        </div>
+        
+    </div>
+</article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

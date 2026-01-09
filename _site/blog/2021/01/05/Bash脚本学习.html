@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bash脚本学习 | Jessie's Blog</title>
+    <meta name="description" content="前言：Bash 是 Unix 系统和 Linux 系统的一种 Shell（命令行环境），是目前绝大多数 Linux 发行版的默认 Shell。Bash 简介      shell 的含义          shell 是一个程序，提供一个与用户对话的环境；      shell 是一个命令解释器，解释用户输入的命...">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+    <header class="post-header">
+        <h1 class="post-title">Bash脚本学习</h1>
+        <div class="post-meta">
+            <time datetime="2021-01-05T00:00:00+08:00">2021年01月05日</time>
+            
+            <span class="post-categories">
+                
+                <a href="/categories/#学习">学习</a>
+                
+                
+            </span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+        <p>前言：Bash 是 Unix 系统和 Linux 系统的一种 Shell（命令行环境），是目前绝大多数 Linux 发行版的默认 Shell。</p>
+
+<h2 id="bash-简介">Bash 简介</h2>
+
+<ul>
+  <li>
+    <p>shell 的含义</p>
+
+    <ul>
+      <li>shell 是一个程序，提供一个与用户对话的环境；</li>
+      <li>shell 是一个命令解释器，解释用户输入的命令；</li>
+      <li>shell 是一个工具箱，提供了各种小工具，供用户方便的使用操作系统的功能。</li>
+    </ul>
+  </li>
+  <li>
+    <p>shell 的种类</p>
+
+    <ul>
+      <li>Bourne Shell（sh）</li>
+      <li>Bourne Again shell（bash）</li>
+      <li>C Shell（csh）</li>
+      <li>TENEX C Shell（tcsh）</li>
+      <li>Korn shell（ksh）</li>
+      <li>Z Shell（zsh）</li>
+      <li>Friendly Interactive Shell（fish）</li>
+    </ul>
+  </li>
+  <li>
+    <p>查看当前运行的 Shell</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ echo $SHELL
+/bin/zsh
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>查看当前的 Linux 系统安装的所有 Shell（上面两个命令中，$是命令行环境的提示符，用户只需要输入提示符后面的内容）</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cat /etc/shells
+/bin/bash
+/bin/csh
+/bin/dash
+/bin/ksh
+/bin/sh
+/bin/tcsh
+/bin/zsh
+</code></pre></div>    </div>
+  </li>
+  <li>进入和退出方法
+进入命令行环境以后，一般就已经打开 Bash 了。如果你的 shell 不是 Bash，可以输入<code class="language-plaintext highlighter-rouge">bash</code>命令启动 Bash。
+退出 Bash 环境，可以使用<code class="language-plaintext highlighter-rouge">exit</code>命令，也可以同时按下<code class="language-plaintext highlighter-rouge">ctrl + d</code>
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tangjing@tangjingdeMacBook-Pro ~ % bash
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+bash-3.2$
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>显示当前所在的目录</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ pwd
+/Users/tangjing
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>echo -e 参数</p>
+
+    <ul>
+      <li>-e 参数使得\n 解释为换行符，导致输出内容里面出现换行</li>
+    </ul>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ echo "hello \nworld"
+hello \nworld
+$ echo -e "hello \nworld"
+hello
+world
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>命令格式</p>
+
+    <ul>
+      <li>
+        <p>ls 命令，ls 后面的-l,-list,-r,-reverse 都是参数</p>
+
+        <ul>
+          <li>ls -l</li>
+          <li>ls -list</li>
+          <li>ls -r</li>
+          <li>ls -reverse</li>
+        </ul>
+      </li>
+      <li>
+        <p>Bash 单个命令一般都是一行，用户按下回车键，就开始执行。有些命令比较长，写成多行会有利于阅读和编辑，这时可以在每一行的结尾加上反斜杠，Bash 就会将下一行跟当前行放在一起解释。</p>
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ echo hello world
+hello world
+#等同于
+$ echo hello \
+&gt; world
+&gt; hello world
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>空格-Bash 使用空格（或 Tab 键）区分不同的参数</p>
+
+    <ul>
+      <li>下面命令中，foo 和 bar 之间有一个空格，所以 Bash 认为它们是两个参数。
+<code class="language-plaintext highlighter-rouge">$ command foo bar</code></li>
+      <li>
+        <p>如果参数之间有多个空格，Bash 会自动忽略多余的空格</p>
+
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ echo this is a  test
+this is a test
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>分号-分号（;）是命令的结束符，使得一行可以放置多个命令，上一个命令执行结束后，再执行第二个命令。</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ echo test;pwd
+test
+/Users/tangjing
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>命令的组合符<code class="language-plaintext highlighter-rouge">&amp;&amp; 和 ||</code></p>
+
+    <ul>
+      <li>
+        <p><code class="language-plaintext highlighter-rouge">Command1 &amp;&amp; Command2</code> 这个命令的意思是，如果 Command1 命令运行成功，则继续运行 Command2 命令。</p>
+
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ echo test111 &amp;&amp; pwd
+test111
+/Users/tangjing
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p><code class="language-plaintext highlighter-rouge">Command1 || Command2</code> 这个命令的意思是，如果 Command1 命令运行失败，则继续运行 Command2 命令。</p>
+
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ llllaaa || pwd
+bash:llllaaa: command not found
+/Users/tangjing
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>type 命令</p>
+
+    <ul>
+      <li>
+        <p>type 命令用来判断命令的来源—下面代码中，type 命令告诉我们，echo 是内部命令，ls 是外部程序（/bin/ls）。type 命令本身也是内置命令。</p>
+
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ type echo
+echo is a shell builtin
+$ type ls
+ls is hashed (/bin/ls)
+$ type type
+type is a shell builtin
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>如果要查看一个命令的所有定义，可以使用 type 命令的-a 参数。下面代码表示，echo 命令即是内置命令，也有对应的外部程序。</p>
+
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ type -a echo
+echo is a shell builtin
+echo is /bin/echo
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>type 命令的-t 参数，可以返回一个命令的类型：别名（alias），关键词（keyword），函数（function），内置命令（builtin）和文件（file）。</p>
+
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ type -t type
+builtin
+$ type -t echo
+builtin
+$ type -t if
+keyword
+$ type -t bash
+file
+</code></pre></div>        </div>
+
+        <p>上面例子中，type 是内置命令，echo 是内置命令，if 是关键词，bash 是 file</p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>快捷键</p>
+
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">Ctrl+ L</code>：清除屏幕并将当前行移到页面顶部</li>
+      <li><code class="language-plaintext highlighter-rouge">Ctrl + C</code>：中止当前正在执行的命令</li>
+      <li><code class="language-plaintext highlighter-rouge">Ctrl + U</code>：从当前位置删除到行首</li>
+      <li><code class="language-plaintext highlighter-rouge">Ctrl + K</code>：从当前位置删除到行尾</li>
+      <li><code class="language-plaintext highlighter-rouge">Ctrl + D</code>：关闭 Shell 对话</li>
+      <li>上下箭头：浏览已执行命令的历史记录</li>
+      <li>Tab 键盘：路径自动补全</li>
+    </ul>
+  </li>
+  <li>
+    <p>Bash 的模式扩展</p>
+
+    <ul>
+      <li>简介
+        <ul>
+          <li>Shell 接收到用户输入的命令以后，会根据空格将用户的输入，拆分成一个个词元（token）。然后，Shell 会扩展词元里面的特殊字符，扩展完成后才会调用相应的命令。</li>
+          <li>这种特殊字符的扩展，称为模式扩展（globbing）。其中有些用到通配符，又称为通配符扩展（wildcard expansion）。Bash 一共提供八种扩展。</li>
+        </ul>
+      </li>
+      <li>关闭扩展：
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ set -o noglob
+# 或者
+$ set -f
+</code></pre></div>        </div>
+      </li>
+      <li>重新打开扩展：
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ set +o noglob
+$ set +f
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>八种扩展：</p>
+
+        <ul>
+          <li>波浪线扩展
+            <ul>
+              <li>波浪线<code class="language-plaintext highlighter-rouge">~</code>会自动扩展成当前用户的主目录。
+                <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ echo ~
+/Users/tangjing
+</code></pre></div>                </div>
+              </li>
+              <li><code class="language-plaintext highlighter-rouge">~/dir</code>表示扩展成主目录的某个子目录，<code class="language-plaintext highlighter-rouge">dir</code>是主目录里面的一个子目录名。
+                <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 进入/Users/tangjing/works目录
+cd ~/works
+</code></pre></div>                </div>
+              </li>
+              <li><code class="language-plaintext highlighter-rouge">~user</code>表示扩展成用户<code class="language-plaintext highlighter-rouge">user</code>的主目录
+                <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ echo ~tangjing
+/Users/tangjing
+$ pwd
+/Users/tangjing
+$ cd ..
+$ pwd
+/Users
+$ cd ~tangjing
+$ pwd
+/Users/tangjing
+$
+</code></pre></div>                </div>
+                <p>如果<code class="language-plaintext highlighter-rouge">~user</code>的<code class="language-plaintext highlighter-rouge">user</code>是不存在的用户名，则波浪号扩展不起作用:</p>
+                <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cd ~jessie
+bash: cd: ~jessie: No such file or directory
+$
+</code></pre></div>                </div>
+                <p><code class="language-plaintext highlighter-rouge">~+</code>会扩展成当前所在的目录，等同于<code class="language-plaintext highlighter-rouge">pwd</code>命令:</p>
+                <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cd ~/works/
+$ echo ~+
+/Users/tangjing/works
+</code></pre></div>                </div>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <p><code class="language-plaintext highlighter-rouge">?</code>字符扩展</p>
+
+            <ul>
+              <li><code class="language-plaintext highlighter-rouge">?</code>字符扩展属于文件名扩展，只有文件确实存在的情况下(例如，当前目录下存在 test.html 这个文件)，才会发生扩展：</li>
+            </ul>
+
+            <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ls ????.html
+test.html
+$ ls ?.html
+ls: ?.html: No such file or directory
+$ ls ????.html
+test.html
+$ echo ?.html
+?.html
+$ echo ????.html
+test.html
+</code></pre></div>            </div>
+          </li>
+          <li>
+            <p><code class="language-plaintext highlighter-rouge">*</code>字符扩展</p>
+
+            <ul>
+              <li><code class="language-plaintext highlighter-rouge">*</code>字符代表文件路径里面的任意数量的任意字符，包括零个字符:</li>
+            </ul>
+
+            <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ls *.html
+test.html	weather.html
+$ ls *.png
+LWScreenShot 2020-12-12 at ??????2.59.19.png
+Simulator Screen Shot - iPhone 12 Pro Max - 2020-12-22 at 22.51.24.png
+Simulator Screen Shot - iPhone 12 Pro Max - 2020-12-27 at 15.27.46.png
+Simulator Screen Shot - iPhone 12 Pro Max - 2021-01-16 at 14.28.22.png
+bimface?????? (1).png
+bimface??????.png
+</code></pre></div>            </div>
+
+            <p>如果你想输出当前目录的所有文件，直接用<code class="language-plaintext highlighter-rouge">*</code>即可:</p>
+
+            <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ls *
+</code></pre></div>            </div>
+
+            <p><code class="language-plaintext highlighter-rouge">*</code>可以匹配空字符:</p>
+
+            <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 存在test.html 和 test2.html两个文件：
+$ ls test*.html
+test.html test2.html
+</code></pre></div>            </div>
+          </li>
+          <li>方括号扩展</li>
+          <li>大括号扩展</li>
+          <li>变量扩展</li>
+          <li>子命令扩展</li>
+          <li>算术扩展</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+    </div>
+
+    <div class="post-navigation">
+        
+        <div class="prev-post">
+            <a href="/blog/2020/07/24/RN%E4%BD%BF%E7%94%A8react-navigation%E5%BA%95%E9%83%A8tab%E5%88%87%E6%8D%A2%E8%A7%A6%E5%8F%91%E7%9B%B8%E5%BA%94%E4%BA%8B%E4%BB%B6.html">
+                <span>上一篇</span>
+                RN使用react-navigation底部tab切换触发相应事件
+            </a>
+        </div>
+        
+        
+        <div class="next-post">
+            <a href="/blog/2021/02/25/react17%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB.html">
+                <span>下一篇</span>
+                React17源码解读笔记
+            </a>
+        </div>
+        
+    </div>
+</article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

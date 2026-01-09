@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手写promise实现 | Jessie's Blog</title>
+    <meta name="description" content="实现代码如下：class MyPromise{    constructor(executor) {        this.status = "pending";     // 初始化状态为pending        this.value = undefined;      // 初始化返回的成功的结果或者失...">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+    <header class="post-header">
+        <h1 class="post-title">手写promise实现</h1>
+        <div class="post-meta">
+            <time datetime="2021-05-11T00:00:00+08:00">2021年05月11日</time>
+            
+            <span class="post-categories">
+                
+                <a href="/categories/#面试合集">面试合集</a>
+                , 
+                
+                <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                
+                
+            </span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+        <h3 id="实现代码如下">实现代码如下：</h3>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">MyPromise</span><span class="p">{</span>
+    <span class="nf">constructor</span><span class="p">(</span><span class="nx">executor</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">pending</span><span class="dl">"</span><span class="p">;</span>     <span class="c1">// 初始化状态为pending</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>      <span class="c1">// 初始化返回的成功的结果或者失败的原因</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">resolveArr</span> <span class="o">=</span> <span class="p">[];</span>        <span class="c1">// 初始化then中成功的方法</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">rejectArr</span> <span class="o">=</span> <span class="p">[];</span>         <span class="c1">// 初始化then中失败的方法</span>
+
+
+        <span class="c1">// 定义change方法，因为我们发现好像resolve和reject方法共同的地方还挺多</span>
+        <span class="kd">let</span> <span class="nx">change</span> <span class="o">=</span> <span class="p">(</span><span class="nx">status</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">!==</span> <span class="dl">"</span><span class="s2">pending</span><span class="dl">"</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>  <span class="c1">// 状态一旦改变，就不会再变</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">status</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+
+            <span class="c1">// 根据状态判断要执行成功的方法或失败的方法</span>
+            <span class="kd">let</span> <span class="nx">fnArr</span> <span class="o">=</span> <span class="nx">status</span> <span class="o">===</span> <span class="dl">"</span><span class="s2">resolved</span><span class="dl">"</span> <span class="p">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolveArr</span> <span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">rejectArr</span><span class="p">;</span>
+
+            <span class="c1">// fnArr中的方法依次执行</span>
+            <span class="nx">fnArr</span><span class="p">.</span><span class="nf">forEach</span><span class="p">(</span><span class="nx">item</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">item</span> <span class="o">!==</span> <span class="dl">"</span><span class="s2">function</span><span class="dl">"</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+                <span class="nf">item</span><span class="p">(</span><span class="k">this</span><span class="p">.</span> <span class="nx">value</span><span class="p">);</span>
+            <span class="p">})</span>
+        <span class="p">}</span>
+        <span class="c1">// 这里是resolve方法，成功后执行，将状态改变为resolved，并且将结果返回</span>
+        <span class="kd">let</span> <span class="nx">resolve</span> <span class="o">=</span> <span class="nx">result</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="c1">// 如果数组中有值，则立即改变状态</span>
+            <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">resolveArr</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nf">change</span><span class="p">(</span><span class="dl">"</span><span class="s2">resolved</span><span class="dl">"</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="c1">// 如果没值，则延后改变状态</span>
+            <span class="kd">let</span> <span class="nx">timer</span> <span class="o">=</span> <span class="nf">setTimeout</span><span class="p">(</span><span class="nx">_</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                <span class="nf">change</span><span class="p">(</span><span class="dl">"</span><span class="s2">resolved</span><span class="dl">"</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span>
+                <span class="nf">clearTimeout</span><span class="p">(</span><span class="nx">timer</span><span class="p">);</span>
+            <span class="p">},</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="c1">// 这里是reject方法，异常时执行，状态改为rejected，并且将失败的原因返回</span>
+        <span class="kd">let</span> <span class="nx">reject</span> <span class="o">=</span> <span class="nx">reason</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="c1">// 如果数组中有值，则立即改变状态</span>
+            <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">rejectArr</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nf">change</span><span class="p">(</span><span class="dl">"</span><span class="s2">rejected</span><span class="dl">"</span><span class="p">,</span> <span class="nx">reason</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="c1">// 如果没值，则延后改变状态</span>
+            <span class="kd">let</span> <span class="nx">timer</span> <span class="o">=</span> <span class="nf">setTimeout</span><span class="p">(</span><span class="nx">_</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                <span class="nf">change</span><span class="p">(</span><span class="dl">"</span><span class="s2">rejected</span><span class="dl">"</span><span class="p">,</span> <span class="nx">reason</span><span class="p">);</span>
+                <span class="nf">clearTimeout</span><span class="p">(</span><span class="nx">timer</span><span class="p">);</span>
+            <span class="p">},</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="c1">// try、catch捕获异常，如果错误，执行reject方法</span>
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="nf">executor</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>
+        <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nf">reject</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="nf">then</span><span class="p">(</span><span class="nx">resolveFn</span><span class="p">,</span> <span class="nx">rejectFn</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 如果传入的两个参数不是函数，则直接执行返回结果</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">resolveFn</span> <span class="o">!==</span> <span class="dl">"</span><span class="s2">function</span><span class="dl">"</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">resolveFn</span> <span class="o">=</span> <span class="nx">result</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">rejectFn</span> <span class="o">!==</span> <span class="dl">"</span><span class="s2">function</span><span class="dl">"</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">rejectFn</span> <span class="o">=</span> <span class="nx">reason</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">MyPromise</span><span class="p">.</span><span class="nf">reject</span><span class="p">(</span><span class="nx">reason</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">new</span> <span class="nc">MyPromise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">resolveArr</span><span class="p">.</span><span class="nf">push</span><span class="p">(</span><span class="nx">result</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                <span class="k">try</span> <span class="p">{</span>
+                    <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="nf">resolveFn</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>  <span class="c1">// 获取执行成功方法返回的结果</span>
+
+                    <span class="c1">// 如果x是一个promise实例，则继续调用then方法 ==&gt; then链的实现</span>
+                    <span class="k">if</span><span class="p">(</span><span class="nx">x</span> <span class="k">instanceof</span> <span class="nx">MyPromise</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">x</span><span class="p">.</span><span class="nf">then</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>
+                        <span class="k">return</span><span class="p">;</span>
+                    <span class="p">}</span>
+
+                    <span class="c1">// 不是promise实例，直接执行成功的方法</span>
+                    <span class="nf">resolve</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nf">reject</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">rejectArr</span><span class="p">.</span><span class="nf">push</span><span class="p">(</span><span class="nx">reason</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                <span class="k">try</span> <span class="p">{</span>
+                    <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="nf">rejectFn</span><span class="p">(</span><span class="nx">reason</span><span class="p">);</span>
+
+                    <span class="k">if</span><span class="p">(</span><span class="nx">x</span> <span class="k">instanceof</span> <span class="nx">MyPromise</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">x</span><span class="p">.</span><span class="nf">then</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>
+                        <span class="k">return</span><span class="p">;</span>
+                    <span class="p">}</span>
+
+                    <span class="nf">resolve</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nf">reject</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+
+    <span class="k">catch</span><span class="p">(</span><span class="nx">rejectFn</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nf">then</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">rejectFn</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="kd">static</span> <span class="nf">resolve</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// 返回新的promise实例，执行promise实例中resolve方法</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nc">MyPromise</span><span class="p">(</span><span class="nx">resolve</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="nf">resolve</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+
+    <span class="kd">static</span> <span class="nf">reject</span><span class="p">(</span><span class="nx">reason</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// 返回新的promise实例，执行promise实例中reject方法</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nc">MyPromise</span><span class="p">((</span><span class="nx">_</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="nf">reject</span><span class="p">(</span><span class="nx">reason</span><span class="p">);</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+
+    <span class="nf">done</span><span class="p">(</span><span class="nx">resolveFn</span><span class="p">,</span> <span class="nx">rejectFn</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nf">then</span><span class="p">(</span><span class="nx">resolveFn</span><span class="p">,</span> <span class="nx">rejectFn</span><span class="p">)</span>
+            <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">reason</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                <span class="nf">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="nx">reason</span><span class="p">;</span>
+                <span class="p">},</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="p">})</span>
+    <span class="p">}</span>
+
+    <span class="k">finally</span><span class="p">(</span><span class="nx">finallyFn</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">P</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="kd">constructor</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nf">then</span><span class="p">(</span>
+            <span class="nx">value</span> <span class="o">=&gt;</span> <span class="nx">P</span><span class="p">.</span><span class="nf">resolve</span><span class="p">(</span><span class="nf">finallyFn</span><span class="p">()).</span><span class="nf">then</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">value</span><span class="p">),</span>
+            <span class="nx">reason</span> <span class="o">=&gt;</span> <span class="nx">P</span><span class="p">.</span><span class="nf">reject</span><span class="p">(</span><span class="nf">finallyFn</span><span class="p">()).</span><span class="nf">then</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">reason</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Promise.all()实现。接收promise数组参数。</span>
+    <span class="c1">// 如果都成功，返回所有的成功结果。只要有一个失败，就返回失败的那个结果</span>
+    <span class="kd">static</span> <span class="nf">all</span><span class="p">(</span><span class="nx">promiseList</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// 返回新实例，调用后还可使用then、catch等方法</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nc">MyPromise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>      <span class="c1">// 成功次数计数</span>
+                <span class="nx">results</span> <span class="o">=</span> <span class="p">[];</span>   <span class="c1">// 返回的结果</span>
+
+            <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">promiseList</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">let</span> <span class="nx">item</span> <span class="o">=</span> <span class="nx">promiseList</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+
+                <span class="c1">// 如果item不是promise实例</span>
+                <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">item</span> <span class="k">instanceof</span> <span class="nx">MyPromise</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
+
+                <span class="nx">item</span><span class="p">.</span><span class="nf">then</span><span class="p">(</span><span class="nx">result</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                    <span class="nx">index</span><span class="o">++</span><span class="p">;</span>
+                    <span class="nx">results</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">result</span><span class="p">;</span>
+                    <span class="k">if</span><span class="p">(</span><span class="nx">index</span> <span class="o">===</span> <span class="nx">promiseList</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nf">resolve</span><span class="p">(</span><span class="nx">results</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}).</span><span class="k">catch</span><span class="p">(</span><span class="nx">reason</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                    <span class="nf">reject</span><span class="p">(</span><span class="nx">reason</span><span class="p">);</span>
+                <span class="p">})</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Promise.race()实现。返回最先得到执行的那个结果</span>
+    <span class="kd">static</span> <span class="nf">race</span><span class="p">(</span><span class="nx">promiseList</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nc">MyPromise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="nx">promiseList</span><span class="p">.</span><span class="nf">forEach</span><span class="p">(</span><span class="nx">item</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">item</span> <span class="k">instanceof</span> <span class="nx">MyPromise</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
+
+                <span class="nx">item</span><span class="p">.</span><span class="nf">then</span><span class="p">(</span><span class="nx">result</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                    <span class="nf">resolve</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+                <span class="p">}).</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                    <span class="nf">reject</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+                <span class="p">})</span>
+            <span class="p">})</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Promise.allSettled()实现。返回所有执行结果，并带有执行结果状态。</span>
+    <span class="kd">static</span> <span class="nf">allSettled</span><span class="p">(</span><span class="nx">promiseList</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nc">MyPromise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">promiseList</span><span class="p">.</span><span class="nx">length</span>
+            <span class="kd">let</span> <span class="nx">promiseResult</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Array</span><span class="p">(</span><span class="nx">len</span><span class="p">)</span>
+            <span class="kd">let</span> <span class="nx">promiseCount</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">promiseList</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">let</span> <span class="nx">item</span> <span class="o">=</span> <span class="nx">promiseList</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+
+                <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">item</span> <span class="k">instanceof</span> <span class="nx">MyPromise</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
+
+                <span class="nx">item</span><span class="p">.</span><span class="nf">then</span><span class="p">(</span><span class="nx">result</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                    <span class="nx">promiseCount</span><span class="o">++</span>
+                    <span class="nx">promiseResult</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="na">status</span><span class="p">:</span> <span class="dl">'</span><span class="s1">fullfilled</span><span class="dl">'</span><span class="p">,</span> <span class="na">value</span><span class="p">:</span> <span class="nx">result</span><span class="p">};</span>
+                <span class="p">},</span> <span class="nx">reason</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                    <span class="nx">promiseCount</span>
+                    <span class="nx">promiseResult</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="na">status</span><span class="p">:</span> <span class="dl">'</span><span class="s1">rejected</span><span class="dl">'</span><span class="p">,</span> <span class="nx">reason</span><span class="p">};</span>
+                <span class="p">}).</span><span class="k">finally</span><span class="p">(()</span><span class="o">=&gt;</span><span class="p">{</span>
+                    <span class="c1">// 所有的都执行完了，才返回</span>
+                    <span class="k">if</span><span class="p">(</span><span class="nx">promiseCount</span> <span class="o">==</span> <span class="nx">len</span><span class="p">){</span>
+                        <span class="nf">resolve</span><span class="p">(</span><span class="nx">promiseResult</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">})</span>
+                
+            <span class="p">}</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+
+
+
+
+<span class="p">}</span>
+</code></pre></div></div>
+
+    </div>
+
+    <div class="post-navigation">
+        
+        <div class="prev-post">
+            <a href="/blog/2021/05/09/react-fiber.html">
+                <span>上一篇</span>
+                react fiber
+            </a>
+        </div>
+        
+        
+        <div class="next-post">
+            <a href="/blog/2021/05/17/jsdoc%E7%9A%84%E4%BD%BF%E7%94%A8.html">
+                <span>下一篇</span>
+                jsdoc的使用
+            </a>
+        </div>
+        
+    </div>
+</article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

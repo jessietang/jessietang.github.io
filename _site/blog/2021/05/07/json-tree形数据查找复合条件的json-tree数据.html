@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>json tree形数据查找复合条件的json tree数据 | Jessie's Blog</title>
+    <meta name="description" content="需求描述存在一个 json tree 形数据：var treeData = [    {        id: 'root',        name: '食物',        children: [            {                id: '1',                nam...">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+    <header class="post-header">
+        <h1 class="post-title">json tree形数据查找复合条件的json tree数据</h1>
+        <div class="post-meta">
+            <time datetime="2021-05-07T00:00:00+08:00">2021年05月07日</time>
+            
+            <span class="post-categories">
+                
+                <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                
+                
+            </span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+        <h3 id="需求描述">需求描述</h3>
+
+<p>存在一个 json tree 形数据：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>var treeData = [
+    {
+        id: 'root',
+        name: '食物',
+        children: [
+            {
+                id: '1',
+                name: '水果',
+                children: [
+                    {
+                        id: '1-1',
+                        name: '水果-苹果',
+                        children: []
+                    },
+                    {
+                        id: '1-2',
+                        name: '香蕉',
+                        children: []
+                    }
+                ]
+            },
+            {
+                id: '2',
+                name: '主食',
+                children: [
+                    {
+                        id: '2-1',
+                        name: '主食-米饭',
+                        children: []
+                    },
+                    {
+                        id: '2-2',
+                        name: '面条',
+                        children: []
+                    },
+                    {
+                        id: '2-3',
+                        name: '米线',
+                        children: []
+                    }
+                ]
+            },
+            {
+                id: '3',
+                name: '零食',
+                children: [
+                    {
+                        id: '3-1',
+                        name: '瓜子',
+                        children: []
+                    },
+                    {
+                        id: '3-2',
+                        name: '花生',
+                        children: []
+                    },
+                    {
+                        id: '3-3',
+                        name: '蚕豆',
+                        children: []
+                    }
+                ]
+            }
+        ]
+    }
+]
+</code></pre></div></div>
+
+<p>输入框搜索关键词，如：“水果”，一旦发现某一层级的 name 匹配上了关键词，则返回这一层级以及他的所有子元素。
+返回的数据应该如下：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>var searchResult = [
+    {
+        id: 'root',
+        name: '食物',
+        children: [
+            {
+                id: '1',
+                name: '水果',
+                children: [
+                    {
+                        id: '1-1',
+                        name: '水果-苹果',
+                        children: []
+                    },
+                    {
+                        id: '1-2',
+                        name: '香蕉',
+                        children: []
+                    }
+                ]
+            }
+    }
+]
+</code></pre></div></div>
+
+<p>算法如下：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    // tree search
+    handleTreeData(treeData, searchValue) {
+      if (!treeData || treeData.length === 0) {
+        return [];
+      }
+      const array = [];
+      for (let i = 0; i &lt; treeData.length; i += 1) {
+        const nodeName = treeData[i].name.toLowerCase()
+        const searchName = searchValue.toLowerCase()
+        if (this.handleTreeData(treeData[i].children, searchValue).length &gt; 0 || nodeName.includes(searchName)) {
+          let obj = {
+            ...treeData[i]
+          }
+          if(!nodeName.includes(searchName)){
+            // 父节点name不包含searchVal,则继续查找。否则，子节点不用查找，把父节点和父节点的children直接返回
+            obj.children = this.handleTreeData(treeData[i].children, searchValue)
+          }
+          array.push(obj)
+        }
+      }
+      return array;
+    }
+</code></pre></div></div>
+
+    </div>
+
+    <div class="post-navigation">
+        
+        <div class="prev-post">
+            <a href="/blog/2021/04/12/%E8%B0%88%E8%B0%88vueRouter.html">
+                <span>上一篇</span>
+                谈谈vue-router
+            </a>
+        </div>
+        
+        
+        <div class="next-post">
+            <a href="/blog/2021/05/07/vue%E4%B8%ADinput%E7%9A%84blur%E5%BD%B1%E5%93%8D%E4%B8%8B%E6%8B%89%E6%A1%86%E4%B8%ADclick%E4%BA%8B%E4%BB%B6.html">
+                <span>下一篇</span>
+                vue中input的blur影响下拉框中click事件
+            </a>
+        </div>
+        
+    </div>
+</article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

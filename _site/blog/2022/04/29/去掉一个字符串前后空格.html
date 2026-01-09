@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>去掉一个字符串前后空格 | Jessie's Blog</title>
+    <meta name="description" content="问题：给定一个字符串，实现一个方法，去掉该字符串的前后空格。(不使用字符串自带的trim、trimEnd、trimLeft、trimRight、trimStart)  方法1：利用正则实现```javascriptvar str = ‘  111  222  3 ‘function trim(str){ retu...">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+    <header class="post-header">
+        <h1 class="post-title">去掉一个字符串前后空格</h1>
+        <div class="post-meta">
+            <time datetime="2022-04-29T00:00:00+08:00">2022年04月29日</time>
+            
+            <span class="post-categories">
+                
+                <a href="/categories/#面试合集">面试合集</a>
+                , 
+                
+                <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                
+                
+            </span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+        <h4 id="问题给定一个字符串实现一个方法去掉该字符串的前后空格不使用字符串自带的trimtrimendtrimlefttrimrighttrimstart">问题：给定一个字符串，实现一个方法，去掉该字符串的前后空格。(不使用字符串自带的trim、trimEnd、trimLeft、trimRight、trimStart)</h4>
+
+<ol>
+  <li>方法1：利用正则实现
+```javascript
+var str = ‘  111  222  3 ‘
+function trim(str){
+ return str.replace(/^\s+|\s+$/g, ‘’)
+}
+trim(str) // ‘111  222  3’</li>
+</ol>
+
+<p>// 去掉左边空格
+// function trimLeft(str){
+//     return str.replace(/^\s+/g, ‘’)
+// }</p>
+
+<p>// 去掉右边空格
+// function trimRight(str){
+//     return str.replace(/\s+$/g, ‘’)
+// }</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+2. 方法2： while true循环实现:
+```javascript
+function myTrim(str){
+    var v = str
+    if(v == ''){return v}
+    while(true){
+        if(v.indexOf(' ') == 0){
+            v = v.substring(1,v.length)
+        }else if(v.length &amp;&amp; v.lastIndexOf(' ') == v.length-1){
+            v = v.substring(0,v.length-1)
+        }else{
+            return v
+        }
+    }
+}
+
+var str = '  111  222  3 '
+myTrim(str) // '111  222  3'
+</code></pre></div></div>
+
+<ol>
+  <li>递归实现:
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">myTrim</span><span class="p">(</span><span class="nx">str</span><span class="p">){</span>
+ <span class="k">if</span><span class="p">(</span><span class="nx">str</span><span class="p">.</span><span class="nf">indexOf</span><span class="p">(</span><span class="dl">'</span><span class="s1"> </span><span class="dl">'</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">str</span><span class="p">.</span><span class="nf">lastIndexOf</span><span class="p">(</span><span class="dl">'</span><span class="s1"> </span><span class="dl">'</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">){</span>
+     <span class="k">return</span> <span class="nx">str</span>
+ <span class="p">}</span>
+ <span class="k">if</span><span class="p">(</span><span class="nx">str</span><span class="p">.</span><span class="nf">indexOf</span><span class="p">(</span><span class="dl">'</span><span class="s1"> </span><span class="dl">'</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+     <span class="nx">str</span> <span class="o">=</span> <span class="nx">str</span><span class="p">.</span><span class="nf">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nx">str</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
+ <span class="p">}</span>
+ <span class="k">if</span><span class="p">(</span><span class="nx">str</span><span class="p">.</span><span class="nx">length</span> <span class="o">&amp;&amp;</span> <span class="nx">str</span><span class="p">.</span><span class="nf">lastIndexOf</span><span class="p">(</span><span class="dl">'</span><span class="s1"> </span><span class="dl">'</span><span class="p">)</span> <span class="o">==</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">){</span>
+     <span class="nx">str</span> <span class="o">=</span> <span class="nx">str</span><span class="p">.</span><span class="nf">substring</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+ <span class="p">}</span>
+ <span class="k">return</span> <span class="nf">myTrim</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="kd">var</span> <span class="nx">str</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">  111  222  3 </span><span class="dl">'</span>
+<span class="nf">myTrim</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="c1">// '111  222  3'</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+    </div>
+
+    <div class="post-navigation">
+        
+        <div class="prev-post">
+            <a href="/blog/2022/04/12/js%E5%8D%95%E7%BA%BF%E7%A8%8B%E5%92%8C%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF.html">
+                <span>上一篇</span>
+                js单线程和事件循环
+            </a>
+        </div>
+        
+        
+        <div class="next-post">
+            <a href="/blog/2022/04/29/%E7%AE%97%E6%B3%95%E5%88%A4%E6%96%AD%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%98%AF%E5%90%A6%E5%90%88%E6%B3%95.html">
+                <span>下一篇</span>
+                算法判断字符串是否合法
+            </a>
+        </div>
+        
+    </div>
+</article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

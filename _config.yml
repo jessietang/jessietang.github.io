@@ -1,0 +1,42 @@
+# 网站基本信息
+name: "Jessie's Blog"
+description: "A personal blog about technology, life and everything in between."
+author: Jessie Tang
+email: jessie@example.com
+url: "https://jessietang.github.io"
+baseurl: ""
+
+# 博客配置
+permalink: /blog/:year/:month/:day/:title.html
+paginate: 5
+paginate_path: "/blog/page:num/"
+
+# 时区设置
+timezone: Asia/Shanghai
+
+# 编码设置
+encoding: "utf-8"
+
+# 主题配置
+theme: minima
+
+# 插件配置
+plugins:
+  - jekyll-paginate
+  - jekyll-seo-tag
+  - jekyll-feed
+
+# 导航菜单
+header_pages:
+  - about.md
+  - categories.md
+
+# 自定义配置
+excerpt_separator: "<!-- more -->"
+
+# 社交链接
+social:
+  github: jessietang
+  weibo: your-weibo-id
+  twitter: your-twitter-id
+  linkedin: your-linkedin-id

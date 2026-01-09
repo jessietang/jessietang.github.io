@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vue和react diff 算法对比 | Jessie's Blog</title>
+    <meta name="description" content="react diff 算法当调用 React 的 render()方法时，会创建一棵由 React 元素组成的树。在下一次 State 或 Props 更新时，相同的 render()方法会返回一棵不同的树。React 会应用 Diffing 算法来高效的比较两棵树，算法过程如下：  当根节点为【不同类型】的元素...">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+    <header class="post-header">
+        <h1 class="post-title">vue和react diff 算法对比</h1>
+        <div class="post-meta">
+            <time datetime="2021-04-12T00:00:00+08:00">2021年04月12日</time>
+            
+            <span class="post-categories">
+                
+                <a href="/categories/#vue">Vue</a>
+                , 
+                
+                <a href="/categories/#react">React</a>
+                
+                
+            </span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+        <h3 id="react-diff-算法">react diff 算法</h3>
+
+<p>当调用 React 的 render()方法时，会创建一棵由 React 元素组成的树。在下一次 State 或 Props 更新时，相同的 render()方法会返回一棵不同的树。React 会应用 Diffing 算法来高效的比较两棵树，算法过程如下：</p>
+
+<ol>
+  <li>当根节点为【不同类型】的元素时，React 会拆卸原有的树，销毁对应的 DOM 节点和关联的 State、卸载子组件，最后再创建新的树。</li>
+  <li>当比对两个【相同类型的 DOM 元素】时，会保留 DOM 节点，【仅比对变更的属性】。</li>
+  <li>当比对两个【相同类型的组件元素】时，组件实例保持不变，【更新该组件实例的 Props】。</li>
+  <li>当递归 DOM 节点的子元素时，React 会同时遍历两个子元素的列表，比对相同位置的元素，性能比较低效。</li>
+  <li>在给子元素添加唯一标识的 key 属性后，就能只比对变更了 key 属性的元素。</li>
+</ol>
+
+<h3 id="vue20-diff-算法">vue2.0 diff 算法</h3>
+
+<ol>
+  <li>先同级比较再比较子节点</li>
+  <li>先判断一方有子节点和一方没有子节点的情况。如果新的一方有子节点，旧的一方没有，相当于新的子节点替代了原来没有的节点；同理，如果新的一方没有子节点，旧的一方有，相当于要把老的节点删除。</li>
+  <li>再来比较都有子节点的情况，这里是 diff 的核心。首先会通过判断两个节点的 key、tag、isComment、data 同时定义或不定义以及当标签类型为 input 的时候 type 相不相同来确定两个节点是不是相同的节点，如果不是的话就将新节点替换旧节点。</li>
+  <li>如果是相同节点的话才会进入到 patchVNode 阶段。在这个阶段核心是采用【双指针】的算法，同时从新旧节点的两端进行比较，在这个过程中，会用到模版编译时的静态标记配合 key 来跳过对比静态节点，如果不是的话再进行其它的比较。</li>
+</ol>
+
+<ul>
+  <li>** 缺点：因为采用的是同级比较，所以如果发现本级的节点不同的话就会将新节点直接替换旧节点，不会再去比较其下的子节点是否有相同 **</li>
+</ul>
+
+<h3 id="vue2vue3-和-react-比较">vue2、vue3 和 react 比较</h3>
+
+<ul>
+  <li>vue2 和 vue3.x:
+Vue3.x 借鉴了 ivi 算法和 inferno 算法。
+它在创建 VNode 的时候就确定了其类型，以及在 mount/patch 的过程中采用位运算来判断一个 VNode 的类型，在这个基础之上再配合核心的 Diff 算法，使得性能上较 Vue2.x 有了提升。</li>
+  <li>vue 和 react:
+共同点是：都是用同层比较，不同点是：vue 使用双指针比较，react 是用 key 集合级比较。</li>
+</ul>
+
+    </div>
+
+    <div class="post-navigation">
+        
+        <div class="prev-post">
+            <a href="/blog/2021/04/12/vue-computed-%E5%B1%9E%E6%80%A7%E4%B8%BA%E4%BB%80%E4%B9%88%E8%83%BD%E5%A4%9F%E5%9C%A8%E4%BE%9D%E8%B5%96%E6%94%B9%E5%8F%98%E7%9A%84%E6%97%B6%E5%80%99-%E8%87%AA%E5%B7%B1%E5%8F%91%E7%94%9F%E5%8F%98%E5%8C%96.html">
+                <span>上一篇</span>
+                vue computed 属性为什么能够在依赖改变的时候，自己发生变化
+            </a>
+        </div>
+        
+        
+        <div class="next-post">
+            <a href="/blog/2021/04/12/vue%E6%A0%B8%E5%BF%83%E8%A7%92%E8%89%B2.html">
+                <span>下一篇</span>
+                vue 核心角色
+            </a>
+        </div>
+        
+    </div>
+</article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

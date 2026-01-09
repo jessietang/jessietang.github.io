@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>算法判断字符串是否合法 | Jessie's Blog</title>
+    <meta name="description" content="问题：给定一个字符串，判断它是否合法（是否闭合正确）。例：合法：[] 、{}, ()、{[()]}、(a{b[c]d}e) 等； 不合法：[{)]、({[a)}) 等。思考： 其实主要是看是否”对称”，但又不是类似“1221”或者“abccba”这种对称。所以相当于是有一个键值对的对应关系。如，”[“对应”]”等...">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Jessie's Blog Feed" href="/feed.xml">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title"><a href="/">Jessie's Blog</a></h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/blog/">博客</a></li>
+                    <li><a href="/about/">关于</a></li>
+                    <li><a href="/categories/">分类</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+    <header class="post-header">
+        <h1 class="post-title">算法判断字符串是否合法</h1>
+        <div class="post-meta">
+            <time datetime="2022-04-29T00:00:00+08:00">2022年04月29日</time>
+            
+            <span class="post-categories">
+                
+                <a href="/categories/#面试合集">面试合集</a>
+                , 
+                
+                <a href="/categories/#零散的知识点积累">零散的知识点积累</a>
+                
+                
+            </span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+        <h4 id="问题给定一个字符串判断它是否合法是否闭合正确例合法--abcde-等-不合法a-等">问题：给定一个字符串，判断它是否合法（是否闭合正确）。例：合法：[] 、{}, ()、{[()]}、(a{b[c]d}e) 等； 不合法：[{)]、({[a)}) 等。</h4>
+
+<p>思考： 其实主要是看是否”对称”，但又不是类似“1221”或者“abccba”这种对称。所以相当于是有一个键值对的对应关系。如，”[“对应”]”等</p>
+
+<ul>
+  <li>实现方法1，存一个键值对：</li>
+</ul>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">isValid</span> <span class="o">=</span> <span class="nf">function </span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// '1t2e3s4t5'.replace(/[^tes]/g, '')  -&gt; 得到 test.  把不是t、e、s这三种字符的其他字符替换成空</span>
+
+            <span class="c1">// https://blog.csdn.net/xuyangxinlei/article/details/81359366</span>
+            <span class="c1">// 字符串：helloword123</span>
+            <span class="c1">// /[^0-9]+/g 可以匹配非数字 得到helloword</span>
+            <span class="c1">// /[^he]+/g 可以匹配非h非e的字符 得到lloword123</span>
+            <span class="c1">// /[^hello]/g 非h非e非l非o，并不能理解为 非(hello)，所以匹配结果是 w 和 rd123。</span>
+            <span class="c1">// 可我们就是想匹配非某个字符串呢？比如某一字符串若是含有hello则无匹配，若是不含hello则匹配，</span>
+            <span class="c1">// 写成[^hello]是显然不行的，[^(hello)] 呢？其实不起作用。</span>
+            <span class="c1">// 这时我们需要用到正则表达式的断言——(?!pattern) 零宽负向先行断言 或者 (?&lt;!pattern) 零宽负向后行断言 均可。</span>
+            <span class="c1">// /^((?!hello).)+$/</span>
+            <span class="c1">// 由于断言 (?!hello)是不占位的，后跟的 . 在原位置匹配任意字符，再用括号将其括起来，用+重复一次或多次，前后加上^和$，若是字符串中存在hello，则匹配到h字符之前的时候，断言(?!hello)匹配失败，正则匹配结果为false， 若是字符串中不存在hello，则匹配结果是整个字符串。</span>
+
+            <span class="c1">// 注意区分，以什么什么开头，和， 非什么什么。  'test'.replace(/^te/g, '&amp;') -&gt; &amp;st</span>
+            <span class="c1">// 把不是[、{、(、)、}、]这几种字符的全部替换成空  特殊符号，需要转义</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">str</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="sr">/</span><span class="se">[^\[\{\(\)\}\]]</span><span class="sr">/g</span><span class="p">,</span> <span class="dl">''</span><span class="p">)</span>
+
+            <span class="c1">// &amp; 是按位与运算符 n&amp;1 ： 先把n 和 1分别转换为二进制，然后对比他们二进制每个位上的数，</span>
+            <span class="c1">// 当双方位置上的数都为1时 结果为1 其它情况都为0，</span>
+            <span class="c1">// 得到n与1按位与计算的二进制结果后再转为十进制与1做是否相等比较。</span>
+            <span class="c1">// 3 ： 0011</span>
+            <span class="c1">// 1 ： 0001</span>
+            <span class="c1">// 3&amp;1 ： 0001  -&gt;  1</span>
+            <span class="c1">// n&amp;1 只有两个结果 当n的最后一位数为1时(n为奇数) n&amp;1=1，其它情况 n&amp;1=0</span>
+            <span class="k">if </span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">length</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span> <span class="c1">// 奇数肯定是false，直接返回节省时间   </span>
+
+            <span class="kd">let</span> <span class="nx">stack</span> <span class="o">=</span> <span class="p">[];</span> <span class="c1">// 栈，先进后出</span>
+            <span class="kd">let</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="c1">// 存一个键值对，同理也可以用map存，也可以不存，不存的话就会多几个if匹配语句        </span>
+                <span class="dl">"</span><span class="s2">)</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">(</span><span class="dl">"</span><span class="p">,</span>
+                <span class="dl">"</span><span class="s2">]</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">[</span><span class="dl">"</span><span class="p">,</span>
+                <span class="dl">"</span><span class="s2">}</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">{</span><span class="dl">"</span>
+            <span class="p">};</span>
+            <span class="k">for </span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">s</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if </span><span class="p">(</span><span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="dl">"</span><span class="s2">(</span><span class="dl">"</span> <span class="o">||</span> <span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">[</span><span class="dl">'</span> <span class="o">||</span> <span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="dl">"</span><span class="s2">{</span><span class="dl">"</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">//匹配左括号            </span>
+                    <span class="nx">stack</span><span class="p">.</span><span class="nf">push</span><span class="p">(</span><span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if </span><span class="p">(</span><span class="nx">stack</span><span class="p">[</span><span class="nx">stack</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="nx">obj</span><span class="p">[</span><span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]])</span> <span class="p">{</span>
+                    <span class="c1">//匹配右括号            </span>
+                    <span class="nx">stack</span><span class="p">.</span><span class="nf">pop</span><span class="p">();</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span> <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="o">!</span><span class="nx">stack</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<ul>
+  <li>实现方法2：
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">isValid</span> <span class="o">=</span> <span class="nf">function </span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+          <span class="c1">// '1t2e3s4t5'.replace(/[^tes]/g, '')  -&gt; 得到 test.  把不是t、e、s这三种字符的其他字符替换成空</span>
+          <span class="c1">// 把不是[、{、(、)、}、]这几种字符的全部替换成空  特殊符号，需要转义</span>
+          <span class="nx">s</span> <span class="o">=</span> <span class="nx">str</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="sr">/</span><span class="se">[^\[\{\(\)\}\]]</span><span class="sr">/g</span><span class="p">,</span> <span class="dl">''</span><span class="p">)</span>
+          <span class="c1">// 如果是奇数，不可能匹配成功，直接返回false    </span>
+          <span class="k">if </span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">length</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span>
+          <span class="kd">let</span> <span class="nx">stack</span> <span class="o">=</span> <span class="p">[]</span>
+          <span class="k">for </span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">s</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+              <span class="k">if </span><span class="p">(</span><span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">(</span><span class="dl">'</span> <span class="o">||</span> <span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">{</span><span class="dl">'</span> <span class="o">||</span> <span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">[</span><span class="dl">'</span><span class="p">)</span> <span class="nx">stack</span><span class="p">.</span><span class="nf">push</span><span class="p">(</span><span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>
+              <span class="k">else</span> <span class="k">if </span><span class="p">(</span><span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">)</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="nx">stack</span><span class="p">[</span><span class="nx">stack</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">(</span><span class="dl">'</span><span class="p">)</span> <span class="nx">stack</span><span class="p">.</span><span class="nf">pop</span><span class="p">()</span>
+              <span class="k">else</span> <span class="k">if </span><span class="p">(</span><span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">}</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="nx">stack</span><span class="p">[</span><span class="nx">stack</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">{</span><span class="dl">'</span><span class="p">)</span> <span class="nx">stack</span><span class="p">.</span><span class="nf">pop</span><span class="p">()</span>
+              <span class="k">else</span> <span class="k">if </span><span class="p">(</span><span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">]</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="nx">stack</span><span class="p">[</span><span class="nx">stack</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">[</span><span class="dl">'</span><span class="p">)</span> <span class="nx">stack</span><span class="p">.</span><span class="nf">pop</span><span class="p">()</span>
+              <span class="k">else</span> <span class="k">return</span> <span class="kc">false</span>
+          <span class="p">}</span>
+          <span class="k">return</span> <span class="o">!</span><span class="nx">stack</span><span class="p">.</span><span class="nx">length</span>
+<span class="p">};</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+    </div>
+
+    <div class="post-navigation">
+        
+        <div class="prev-post">
+            <a href="/blog/2022/04/29/%E5%8E%BB%E6%8E%89%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%89%8D%E5%90%8E%E7%A9%BA%E6%A0%BC.html">
+                <span>上一篇</span>
+                去掉一个字符串前后空格
+            </a>
+        </div>
+        
+        
+        <div class="next-post">
+            <a href="/blog/2022/04/30/3-4%E6%9C%88%E6%89%BE%E5%B7%A5%E4%BD%9C%E9%9D%A2%E8%AF%95%E9%A2%98%E5%90%88%E9%9B%86%E6%95%B4%E7%90%86.html">
+                <span>下一篇</span>
+                2022年3、4月找工作面试题合集整理
+            </a>
+        </div>
+        
+    </div>
+</article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Jessie Tang. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/jessietang" target="_blank">GitHub</a>
+                <a href="http://weibo.com/your-weibo-id" target="_blank">微博</a>
+                <a href="https://twitter.com/your-twitter-id" target="_blank">Twitter</a>
+                <a href="/feed.xml" target="_blank">RSS</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
